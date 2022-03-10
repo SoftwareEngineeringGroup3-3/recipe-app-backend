@@ -3,8 +3,8 @@ const { User, comparePassword, validateUsername, validatePassword } = require ('
 const { verifyToken, createToken } = require ('../templates/token.js');
 
 const loginValidation = {
-    user_name: { required: true, type: 'string', lambda: validateUsername },
-    user_password: { required: true, type: 'string', lambda: validatePassword }
+    username: { required: true, type: 'string', lambda: validateUsername },
+    password: { required: true, type: 'string', lambda: validatePassword }
 };
 
 const getAuthorizationToken = async (req, username, password) => {
@@ -29,7 +29,7 @@ class ApiAuthorizationObject extends ApiObject {
         this.enforceContentType(req, 'application/json');
         const data = this.parseAndValidate(req.body, loginValidation, true);
 
-        return await getAuthorizationToken(req, data.user_name, data.user_password);
+        return await getAuthorizationToken(req, data.username, data.password);
     }
 }
 
