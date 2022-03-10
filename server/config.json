@@ -1,0 +1,11 @@
+{
+    "http": {
+        "port": 3000
+    },
+    "cors_origins": [
+        "http://localhost:8080"
+    ],
+    "api_objects": {
+        "/api/logging": "./endpoints/logging.js" 
+    }
+}
