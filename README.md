@@ -3,7 +3,7 @@
 
 ## General info
 
-#### For implementing new features go to `Issues -> (pick one) -> Create a branch (if not created) -> switch to branch in VC Code`
+#### For implementing new features go to `Issues -> (pick one) -> Assign yourself -> Create a branch (if not created) -> switch to branch in VC Code`
 
 ### Remember to assign reviewers for your pull requests (for this repository, at least `Mateusz Wojtyński`)
 
@@ -27,7 +27,7 @@ To check if everything works:\
 -headers: `Content-Type: "application/json"`\
 -body (set to raw): `
   {
-     "user_name": "Matthew",
-     "user_password": "Mateusz"
+     "username": "Matthew",
+     "password": "Mateusz"
   }
 `
