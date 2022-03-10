@@ -1,0 +1,27 @@
+{
+  "name": "recipe-app-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "setupProject": "node setupDatabase.js",
+    "startServer": "node server/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MateuszWojtynski/recipe-app-backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MateuszWojtynski/recipe-app-backend/issues"
+  },
+  "homepage": "https://github.com/MateuszWojtynski/recipe-app-backend#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "better-sqlite3": "^7.4.5",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express.js": "^1.0.0"
+  }
+}
