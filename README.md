@@ -20,6 +20,9 @@ Default values:\
 `username: Matthew`\
 `password: Mateusz`\
 \
+Password is hashed with bcrypt, using 10 rounds.\
+You can hash any string using this page: `https://bcrypt-generator.com/`\
+\
 To check if everything works:\
 -open Postman\
 -set request type to `POST`\
