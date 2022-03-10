@@ -9,19 +9,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MateuszWojtynski/recipe-app-backend.git"
+    "url": "git+https://github.com/SoftwareEngineeringGroup3-3/recipe-app-backend.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/MateuszWojtynski/recipe-app-backend/issues"
+    "url": "https://github.com/SoftwareEngineeringGroup3-3/recipe-app-backend/issues"
   },
-  "homepage": "https://github.com/MateuszWojtynski/recipe-app-backend#readme",
+  "homepage": "https://github.com/SoftwareEngineeringGroup3-3/recipe-app-backend#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "better-sqlite3": "^7.4.5",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express.js": "^1.0.0"
-  }
+  },
+  "devDependencies": {}
 }
