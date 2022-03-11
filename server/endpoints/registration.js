@@ -19,14 +19,20 @@ class ApiRegistrationObject extends ApiObject {
         this.enforceContentType(req, 'application/json');
         const data = this.parseAndValidate(req.body, registrationValidation, true);
         checkUsernameUniqueness(req,data.username);
-        var usrIns= new User(null,true);
-        usrIns.username=data.username;
-        usrIns.password=await hashPassword(data.password);
-        usrIns.email=data.email;
-        usrIns.created=Date.now();
-        usrIns.isAdmin="0";
-        usrIns.insert(req.database);
-        return usrIns.serialize();
+        var usrNew= new User(null,true);
+        usrNew.username=data.username;
+        usrNew.password=await hashPassword(data.password);
+        usrNew.email=data.email;
+        usrNew.created=Date.now();
+        usrNew.isAdmin="0";
+        usrNew.insert(req.database);
+        if(!usrNew.id)
+        {
+            throw new ApiError(403, 'User creation failed');
+        }
+        delete usrNew.password;
+        usrNew = usrNew.serialize();
+        return usrNew;
     }
 }
 
