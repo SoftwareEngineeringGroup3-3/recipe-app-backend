@@ -6,6 +6,7 @@
         "http://localhost:8080"
     ],
     "api_objects": {
-        "/api/logging": "./endpoints/logging.js" 
+        "/api/logging": "./endpoints/logging.js", 
+        "/api/registration": "./endpoints/registration.js"
     }
 }
