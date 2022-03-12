@@ -3,7 +3,7 @@
 
 ## General info
 
-### For implementing new features go to `Issues -> (pick one) -> Assign yourself -> Create a branch (if not created) -> switch to branch in VS Code`
+### For implementing new features go to `Issues -> (pick one) -> Assign yourself -> Create a branch (if not created) -> switch to branch in VS Code -> After pull request has been merged DO NOT delete the branch you have worked on`
 
 ### Remember to assign reviewers for your pull requests (for this repository, at least `Mateusz Wojtyński`)
 
