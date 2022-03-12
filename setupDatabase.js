@@ -20,6 +20,12 @@ db.prepare(`CREATE TABLE IF NOT EXISTS user_tokens (
     user_token_address VARCHAR(255)
 )`).run();
 
+db.prepare(`CREATE TABLE IF NOT EXISTS ingredients (
+    ingredient_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ingredient_name VARCHAR(255) NOT NULL,
+    ingredient_photo VARCHAR(255)
+)`).run();
+
 db.prepare(`INSERT INTO users ( 
         user_is_admin, 
         user_name, 
