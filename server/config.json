@@ -7,6 +7,7 @@
     ],
     "api_objects": {
         "/api/logging": "./endpoints/logging.js", 
-        "/api/registration": "./endpoints/registration.js"
+        "/api/registration": "./endpoints/registration.js",
+        "/api/ingredients": "./endpoints/ingredients.js"
     }
 }
