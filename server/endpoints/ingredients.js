@@ -3,7 +3,7 @@ const { Ingredient, validateName, ingredientFormat } = require ('../templates/in
 //const { verifyToken } = require ('../templates/token.js'); //Don't know if this is needed for user type validation
 
 const ingredientClassFormat = {
-    id: {required: false, type: 'integer', lambda: () => { return true; }},
+    id: {required: false, type: 'number', lambda: () => { return true; }},
     name: { required: true, type: 'string', lambda: validateName },
     photo: { required: false, type: 'string',lambda: () => { return true; }}
 };
