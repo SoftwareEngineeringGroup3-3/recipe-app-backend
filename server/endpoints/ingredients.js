@@ -3,9 +3,9 @@ const { Ingredient, validateName, ingredientFormat } = require ('../templates/in
 //const { verifyToken } = require ('../templates/token.js'); //Don't know if this is needed for user type validation
 
 const ingredientClassFormat = {
-    id: {required: false, type: 'integer'},
+    id: {required: false, type: 'integer', lambda: () => { return true; }},
     name: { required: true, type: 'string', lambda: validateName },
-    photo: { required: false, type: 'string'}
+    photo: { required: false, type: 'string',lambda: () => { return true; }}
 };
 const checkDataUniqueness = (req, ingredientName) => {
     const ingredientsWithSameName = req.database.prepare('SELECT ingredient_id FROM ingredients WHERE ingredient_name = ?').all(ingredientName);
