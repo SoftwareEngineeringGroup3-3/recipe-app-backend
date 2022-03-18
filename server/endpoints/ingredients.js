@@ -15,7 +15,7 @@ const checkDataUniqueness = (req, ingredientName) => {
 class ApiIngredientObject extends ApiObject {
     async post (req) {
         this.enforceContentType(req, 'application/json');
-        const data = this.parseAndValidate(req.body, ingredientClassFormat, false);
+        const data = this.parseAndValidate(req.body, ingredientClassFormat, true);
         checkDataUniqueness(req,data.name);
         var ingredient = new Ingredient();
         //ingredient.id=data.id; //Is this line needed? The API specification seems to suggest so, yet so it did for Registration but we removed this line from that.
