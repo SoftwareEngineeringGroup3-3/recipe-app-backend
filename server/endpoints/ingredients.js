@@ -15,15 +15,10 @@ const checkDataUniqueness = (req, ingredientName) => {
 class ApiIngredientObject extends ApiObject {
     async post (req) {
         this.enforceContentType(req, 'application/json');
-        //const data = this.parseAndValidate(req.body, ingredientClassFormat, false); //causes wrong error numbers to be returned. Replaced by simple parse in the following line:
-        const data= JSON.parse(req.body);
-        if(!validateName(data.name))
-        {
-            throw new ApiError(403,'Validation exception: Incorrect or missing ingredient name.')
-        }
+        const data = this.parseAndValidate(req.body, ingredientClassFormat, false);
         checkDataUniqueness(req,data.name);
         var ingredient = new Ingredient();
-        //ingredient.id=data.id; //Is this line needed? The API specificatio`n seems to suggest so, yet so it did for Registration but we removed this line from that.
+        //ingredient.id=data.id; //Is this line needed? The API specification seems to suggest so, yet so it did for Registration but we removed this line from that.
         ingredient.name=data.name;
         ingredient.photo=data.photo;
         ingredient.insert(req.database);
