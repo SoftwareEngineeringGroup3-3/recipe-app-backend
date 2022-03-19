@@ -79,17 +79,17 @@ describe("DELETE /ingredients", function () {
 
 
 //Validation function tests:
-// const { validateName } = require ('../server/templates/ingredients.js');
+const { validateName } = require ('../server/templates/ingredients.js');
 
 
-// test('99 as ingredient name is invalid:', () => {
-//     expect(validateName("99")).toBe(false);
-// });
+test('99 as ingredient name is invalid:', () => {
+    expect(validateName("99")).eql(false);
+});
 
-// test('"bs l@l" as ingredient name is invalid:', () => {
-//     expect(validateName("bs l@l")).toBe(false);
-// });
+test('"bs l@l" as ingredient name is invalid:', () => {
+    expect(validateName("bs l@l")).eql(false);
+});
 
-// test('Cheese as ingredient name is valid:', () => {
-//     expect(validateName("Cheese")).toBe(true);
-// });
+test('Cheese as ingredient name is valid:', () => {
+    expect(validateName("Cheese")).eql(true);
+});
