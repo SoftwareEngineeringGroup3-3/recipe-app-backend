@@ -8,6 +8,7 @@ const ingredientClassFormat = {
     photo: { required: false, type: 'string',lambda: () => { return true; }}
 };
 
+
 const ingredientFetchFormat = {
     id: {required: true, type: 'number', lambda: () => { return true; }},
 }
@@ -38,8 +39,10 @@ class ApiIngredientObject extends ApiObject {
 
     async delete(req){
         console.log("endpoints/ingredients: recieved delete")
+      
         this.enforceContentType(req, 'application/json');
         const data=this.parseAndValidate(req.body,ingredientFetchFormat, true);
+
         var ingred= new Ingredient(data.id);
         if(!ingred.fetch(req.database)) //fetch, when succesful, populates the other fields of the ingredient apart from the id.
         {
