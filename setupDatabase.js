@@ -7,9 +7,55 @@ db.prepare(`CREATE TABLE IF NOT EXISTS users (
     user_name VARCHAR(255) NOT NULL,
     user_password VARCHAR(255) NOT NULL,
     user_email VARCHAR(255) NOT NULL,
+    user_photo VARCHAR(255),
     user_creation INTEGER NOT NULL,
     user_last_login INTEGER,
     user_last_ip VARCHAR(255)
+)`).run();
+
+db.prepare(`CREATE TABLE IF NOT EXISTS recipes (
+    recipe_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    recipe_name VARCHAR(255) NOT NULL,
+    recipe_instructions TEXT,
+    recipe_ingredients TEXT NOT NULL,
+    recipe_tags VARCHAR(255),
+    recipe_photo VARCHAR(255)
+)`).run();
+
+db.prepare(`CREATE TABLE IF NOT EXISTS shops (
+    shop_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shop_vendor_name VARCHAR(255) NOT NULL,
+    shop_products TEXT
+)`).run();
+
+db.prepare(`CREATE TABLE IF NOT EXISTS restaurants (
+    restaurant_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    restaurant_name VARCHAR(255) NOT NULL
+)`).run();
+
+db.prepare(`CREATE TABLE IF NOT EXISTS restaurants_recipes (
+    recipe_id INTEGER,
+    restaurant_id INTEGER,
+    price INTEGER NOT NULL,
+    PRIMARY KEY (recipe_id, restaurant_id),
+    CONSTRAINT fk_recipes
+        FOREIGN KEY (recipe_id)
+        REFERENCES recipes(recipe_id),
+    CONSTRAINT fk_restaurants
+        FOREIGN KEY (restaurant_id)
+        REFERENCES restaurants(restaurant_id)
+)`).run();
+
+db.prepare(`CREATE TABLE IF NOT EXISTS users_recipes (
+    user_id INTEGER,
+    recipe_id INTEGER,
+    PRIMARY KEY (user_id, recipe_id),
+    CONSTRAINT fk_users
+        FOREIGN KEY (user_id)
+        REFERENCES users(user_id),
+    CONSTRAINT fk_recipes
+        FOREIGN KEY (recipe_id)
+        REFERENCES recipes(recipe_id)
 )`).run();
 
 db.prepare(`CREATE TABLE IF NOT EXISTS user_tokens (
