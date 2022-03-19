@@ -83,7 +83,7 @@ class DatabaseObject {
             const idColumnName = this.__props['id'];
             const query = `DELETE FROM ${this.tableName} WHERE ${idColumnName} = ?`;
 
-            db.prepare(query).run(this.id);
+            database.prepare(query).run(this.id);
         }
     }
 
