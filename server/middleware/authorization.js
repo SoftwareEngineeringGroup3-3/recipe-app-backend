@@ -3,7 +3,7 @@ const { User } = require('../templates/user');
 
 module.exports = async (req, res, next) => {
     if(req.database && req.cookies) {
-        const token = req.cookies.user_token;
+        const token = req.cookies.login_token;
 
         if(token) {
             try {

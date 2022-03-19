@@ -14,7 +14,7 @@ const app = express();
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(reqbody);
 app.use(cors ({
-    origin: config.cors_origin,
+    origin: config.cors_origins,
     credentials: true
 }));
 app.use(cookieParser());
@@ -28,4 +28,4 @@ for(const url in config.api_objects) {
     registerEndpoint(app, url, new(require(config.api_objects[url]))());
 }
 
-app.listen(3000);
+app.listen(5000);
