@@ -3,7 +3,8 @@
         "port": 5000
     },
     "cors_origins": [
-        "http://localhost:3000"
+        "http://localhost:3000",
+        "http://localhost:5000"
     ],
     "api_objects": {
         "/api/logging": "./endpoints/logging.js", 
