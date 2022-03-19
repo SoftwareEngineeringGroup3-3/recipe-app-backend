@@ -32,7 +32,7 @@ You can hash any string using this page: `https://bcrypt-generator.com/`\
 To check if everything works:\
 -open Postman\
 -set request type to `POST`\
--url: `localhost:3000/api/logging`\
+-url: `localhost:5000/api/logging`\
 -headers: `Content-Type: "application/json"`\
 -body (set to raw): `
   {
