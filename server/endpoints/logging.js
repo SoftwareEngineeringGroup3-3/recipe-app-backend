@@ -21,7 +21,7 @@ const getAuthorizationToken = async (req, username, password) => {
     const userInfo = new User(user.user_id, false);
     userInfo.fetch(req.database);
 
-    return { token: token, user: userInfo.serialize() };
+    return { security_header: token, user: userInfo.serialize() };
 }
 
 class ApiAuthorizationObject extends ApiObject {
