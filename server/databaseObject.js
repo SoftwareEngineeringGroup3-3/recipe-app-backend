@@ -8,7 +8,7 @@ class DatabaseObject {
 
     //Binding Object properties to corresponding columns' names in the database
     bindProperty (propertyName, databaseColumn, defaultValue = null) {
-        this.__props [propertyName] = databaseColumn;
+        this.__props[propertyName] = databaseColumn;
         this[propertyName] = defaultValue;
     }
 
@@ -44,7 +44,7 @@ class DatabaseObject {
                 const dbProperty = this.__props[classProperty];
 
                 assignments.push(`${dbProperty} = ?`);
-                values.push(this[classProp]);
+                values.push(this[classProperty]);
             }
 
             const query = `UPDATE ${this.tableName} SET ${assignments.join(', ')} WHERE ${idColumnName} = ?`;
