@@ -77,6 +77,36 @@ describe("DELETE /ingredients", function () {
 });
 
 
+describe("PUT /ingredients", function () { //ID and Packet validation is done seperately after these in the unit tests, so I won't repeat any which would require that for now (unlike the ones before this in the current file)
+  it("Returns 404 for id with no corresponding ingredient (in our case, 0 is always unused/reserved)", async function () { 
+    const response = await request(app).put("/api/ingredients").send({
+      "id": 0,
+      "name": "NOW_BETTER_THAN_EVER",
+      "photo": ""
+    });
+    
+    expect(response.status).to.eql(404);
+  });
+
+  it("should return 200 for ingredient with existing id",async function () {
+    
+    const db = new sqlite('database.db');
+
+    var test = new Ingredient();
+    test.name="UPDATE_TEST_RESERVED";
+    test.photo="";
+    test.insert(db);
+
+    const response= await request(app).put("/api/ingredients").send(
+        {"id": test.id,
+        "name": "NOW_BETTER_THAN_EVER_VTWO",
+        "photo":""});
+    expect(response.status).to.eql(200);
+    //Here, we can additionally compare parsed response to var test to see if the changes did take place. Maybe later?
+    test.delete(db);
+   })
+});
+
 
 //Validation function tests:
 const { validateName } = require ('../server/templates/ingredients.js');
