@@ -18,6 +18,7 @@ const checkDataUniqueness = (req, ingredientName) => {
     if(ingredientsWithSameName.length > 0) throw new ApiError(403,'Parameters error: ingredient with the same name already exists.'); //we assume ingredient names are unique
     return true;
 }
+
 class ApiIngredientObject extends ApiObject {
     async post (req) {
         console.log("endpoints/ingredients: recieved post")
@@ -50,6 +51,27 @@ class ApiIngredientObject extends ApiObject {
         }
         ingred.delete(req.database);
         return ingred.serialize();
+    }
+
+    async put(req){
+        console.log("endpoints/ingredients: recieved put");
+
+        this.enforceContentType(req,'application/json');
+        const data=this.parseAndValidate(req.body,ingredientClassFormat, true);
+
+        var oldIngredient = new Ingredient(data.id);
+        if(!oldIngredient.fetch(req.database)) //fetch returns false if id doesn't exist or true if it does.
+        {
+            throw new ApiError(404, 'Ingredient not found')
+        }
+
+        var ingredient= new Ingredient(data.id);
+        ingredient.id=data.id;
+        ingredient.name=data.name;
+        ingredient.photo=data.photo;
+        ingredient.sync(req.database);
+
+        return ingredient.serialize();
     }
 }
 
