@@ -25,7 +25,31 @@ function validateRecipeTags(tag) {
 }
 function validateRecipeIngredients(ingridients)
 {
-    return ( ingridients.length > 2 && ingridients.match(/(\d+:\d+);(\d+:\d+)/g));
+    return ( ingridients.length > 2 && checkRecipeIngredientFormat(ingridients));
+}
+
+function checkRecipeIngredientFormat(format)
+{
+    var splitFormat = format.split(';');
+    if (splitFormat.every(checkFormat))
+    {
+        return true;
+    }
+    return false;
+}
+
+function checkFormat(f)
+{
+    var w = f.split(':');
+    if(w.length != 2)
+    {
+        return false;
+    }
+    if (f.match(/([0-9]+):([0-9]+)/) != null)
+    {
+        return true;
+    }
+    return false;
 }
 
 const recipeFormat = {

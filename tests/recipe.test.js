@@ -55,4 +55,21 @@ test('Valid Recipe Tag', () => {
   expect(validateRecipeTags('Vege/Bio')).toBe(true);
 });
 
+test('Invalid recipe ingredients', ()=> {
+  expect(validateRecipeIngredients("1:1,2:3")).toBe(false);
+});
 
+test('Invalid recipe ingredients', ()=> {
+  expect(validateRecipeIngredients("1:1;2:33;3:a")).toBe(false);
+});
+
+test('Valid recipe ingredients v1', ()=> {
+  expect(validateRecipeIngredients("1:1;2:3")).toBe(true);
+});
+test('Valid recipe ingredients v2', ()=> {
+  expect(validateRecipeIngredients("1:1;2:3;4:7;7:2")).toBe(true);
+});
+
+test('Valid recipe ingredients v3', ()=> {
+  expect(validateRecipeIngredients("11232:1;2:3;4:7;7:2")).toBe(true);
+});
