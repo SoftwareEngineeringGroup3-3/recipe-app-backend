@@ -12,20 +12,20 @@ class Recipe extends DatabaseObject {
     }
 }
 
-async function validateRecipeName(name) {
+function validateRecipeName(name) {
     return (name.length >= 5 && name.length <= 100);
 }
 
-async function validateRecipeInstructions(instructions) {
+function validateRecipeInstructions(instructions) {
     return ( instructions.length <= 1000);
 }
 
-function validateRecipeTags (tag) {
+function validateRecipeTags(tag) {
     return ( tag.length >=3 && tag.length <= 25 );
 }
 function validateRecipeIngredients(ingridients)
 {
-    return ( ingridients.length > 4 && ingridients.match(/(\d+:\d+)/g));
+    return ( ingridients.length > 2 && ingridients.match(/(\d+:\d+);(\d+:\d+)/g));
 }
 
 const recipeFormat = {
@@ -35,4 +35,5 @@ const recipeFormat = {
     recipe_ingredients : {required: true, type: 'string', lambda: validateRecipeIngredients}
 };
 
-module.exports = { Recipe, recipeFormat };
+module.exports = { Recipe, validateRecipeName, validateRecipeInstructions,
+    validateRecipeTags, validateRecipeIngredients, recipeFormat  };
