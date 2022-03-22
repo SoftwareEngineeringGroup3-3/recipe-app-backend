@@ -2,9 +2,8 @@ const { verifyToken } = require('../templates/token');
 const { User } = require('../templates/user');
 
 module.exports = async (req, res, next) => {
-    if(req.database && req.cookies) {
-        const token = req.cookies.security_header;
-
+    if(req.database && req.headers && req.headers.authorization) {
+        const token=req.headers.authorization.replace("Bearer ","");;
         if(token) {
             try {
                 const user_id = await verifyToken(req.database, token, req.socket.remoteAddress);

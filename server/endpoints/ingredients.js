@@ -1,6 +1,6 @@
 const { ApiObject, ApiError } = require ('../apiobject.js');
 const { Ingredient, validateName, ingredientFormat } = require ('../templates/ingredients.js');
-//const { verifyToken } = require ('../templates/token.js'); //Don't know if this is needed for user type (admin or normal user) validation
+const { User } = require('../templates/user.js');
 
 const ingredientPostFormat = {
     id: {required: false, type: 'number', lambda: () => { return true; }},
@@ -25,8 +25,25 @@ const checkDataUniqueness = (req, ingredientName) => {
     return true;
 }
 
+const checkAdminCredentials = (req) =>{
+    if((typeof req.user)== 'undefined' || req.user.isAdmin!=1) //make sure to require user.js if you try to access req.user
+    {
+        throw new ApiError(401, "Error: User not authorized");
+    }
+    return true;
+}
+
+const checkBasicAuth = (req) =>{
+    if((typeof req.user) == 'undefined')
+    {
+        throw new ApiError(401, "Error: User not authorized");
+    }
+    return true;
+}
+
 class ApiIngredientObject extends ApiObject {
     async post (req) {
+        checkAdminCredentials(req);
         console.log("endpoints/ingredients: recieved post")
         this.enforceContentType(req, 'application/json');
         const data = this.parseAndValidate(req.body, ingredientPostFormat, true);
@@ -45,6 +62,7 @@ class ApiIngredientObject extends ApiObject {
     }
 
     async delete(req){
+        checkAdminCredentials(req);
         console.log("endpoints/ingredients: recieved delete")
       
         this.enforceContentType(req, 'application/json');
@@ -60,6 +78,7 @@ class ApiIngredientObject extends ApiObject {
     }
 
     async put(req){
+        checkAdminCredentials(req);
         console.log("endpoints/ingredients: recieved put");
 
         this.enforceContentType(req,'application/json');
