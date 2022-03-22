@@ -29,12 +29,12 @@ You can hash any string using this page: `https://bcrypt-generator.com/`\
 \
 To check if everything works:\
 -open Postman\
--set request type to `POST`\
--url: `localhost:5000/api/logging`\
+-set request type to { `POST` | `PUT` | `GET` | `DELETE` }\
+-url: `localhost:5000/api/{endpoint}`\
 -headers: `Content-Type: "application/json"`\
 -body (set to raw): `
   {
-     "username": "Matthew",
-     "password": "Mateusz"
+     "parameter_1": "value_1", ... ,
+     "parameter_n": "value_n"
   }
 `
