@@ -1,6 +1,6 @@
 const { ApiObject, ApiError } = require ('../apiobject.js');
 const { Recipe, validateRecipeName,validateRecipeInstructions, validateRecipeTags, 
-    validateRecipeIngredients, recipeFormat } = require ('../templates/recipes.js');
+    validateRecipeIngredients, recipeFormat } = require ('../templates/recipes');
 
 const recipePostFormat = {
     name: { required: true, type: 'string', lambda: validateRecipeName },
@@ -21,7 +21,7 @@ class ApiRecipeObject extends ApiObject {
         recipe.name = data.name;
         recipe.instructions = data.instructions;
         recipe.tags = data.tags;
-        recipe.ingredients = data.ingredients;
+        recipe.ingredients = convertDataIngredients(data.ingredients);
         recipe.insert(req.database);
         if(!recipe.id)
         {
@@ -32,4 +32,17 @@ class ApiRecipeObject extends ApiObject {
     }
 }
 
-module.exports = ApiRecipeObject;
+function convertDataIngredients(recipeIngredient)
+{
+    var finalVersion = "";
+    for( let i = 0; i < recipeIngredient.length; i++)
+    {
+        finalVersion += (recipeIngredient[i][0].id).toString();
+        finalVersion += ':';
+        finalVersion += recipeIngredient[i][1];
+        finalVersion += ';';
+    }
+    return finalVersion;
+}
+
+module.exports = {ApiRecipeObject, convertDataIngredients };

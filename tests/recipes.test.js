@@ -5,6 +5,7 @@ const app = require('../server/app.js'); //reference to server.js
 const sqlite = require('better-sqlite3');
 const expect = require("chai").expect;
 const { Ingredient } = require ('../server/templates/ingredients');
+
 test('Empty word is invalid name', () => {
     expect(validateRecipeName("")).to.eql(false);
 });
@@ -113,4 +114,26 @@ test('Valid recipe ingredients ', ()=> {
   //   });
   //   expect(response.status).to.eql(400);
   // });
+// });
+
+const { convertDataIngredients } = require ('../server/enpoints/recipes.js');
+
+
+test('Valid convert of ingredients ', ()=> {
+  let v = new Ingredient();
+  v.id = '1';
+  v.name = 'Milk';
+  var quantity = '3';
+  var x = [[v,quantity]];
+  
+  expect(convertDataIngredients(x)).to.eql('1:3;');
+});
+
+// test('InValid convert of ingredients ', ()=> {
+//   let v = new Ingredient();
+//   v.id = '1';
+//   v.name = 'Milk';
+//   var quantity = '3';
+//   var x = [[v,quantity]];
+//   expect(convertDataIngredients(x)).to.eql(false);
 // });
