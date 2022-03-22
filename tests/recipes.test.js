@@ -4,7 +4,7 @@ const request = require("supertest");//("http://localhost:5000");
 const app = require('../server/app.js'); //reference to server.js
 const sqlite = require('better-sqlite3');
 const expect = require("chai").expect;
-
+const { Ingredient } = require ('../server/templates/ingredients');
 test('Empty word is invalid name', () => {
     expect(validateRecipeName("")).to.eql(false);
 });
@@ -59,35 +59,50 @@ test('Valid Recipe Tag', () => {
 });
 
 test('Invalid recipe ingredients', ()=> {
-  expect(validateRecipeIngredients("1:1,2:3")).to.eql(false);
+  let v = new Ingredient();
+  v.id = '0';
+  v.name = '';
+  var quantity = 2;
+  var x = [[v,quantity]];
+  expect(validateRecipeIngredients(x)).to.eql(false);
 });
 
 test('Invalid recipe ingredients', ()=> {
-  expect(validateRecipeIngredients("1:1;2:33;3:a")).to.eql(false);
+  let v = new Ingredient();
+  v.id = '0';
+  v.name = '';
+  var quantity = 2;
+  var x = [[v,quantity]];
+  expect(validateRecipeIngredients(x)).to.eql(false);
 });
 
-test('Valid recipe ingredients v1', ()=> {
-  expect(validateRecipeIngredients("1:1;2:3")).to.eql(true);
-});
-test('Valid recipe ingredients v2', ()=> {
-  expect(validateRecipeIngredients("1:1;2:3;4:7;7:2")).to.eql(true);
-});
-
-test('Valid recipe ingredients v3', ()=> {
-  expect(validateRecipeIngredients("11232:1;2:3;4:7;7:2")).to.eql(true);
+test('Valid recipe ingredients ', ()=> {
+  let v = new Ingredient();
+  v.id = '1';
+  v.name = 'Milk';
+  var quantity = '3';
+  var x = [[v,quantity]];
+  expect(validateRecipeIngredients(x)).to.eql(true);
 });
 
-describe("POST /recipe", function () {
 
-  it("Returns 200 for valid recipe", async function () {
-    const response = await request(app).post("/api/recipes").send({
-      "name": "Apple pie",
-      "instructions" : "Cut, Mix, Put",
-      "tags" : "Good",
-      "ingredients" : "1:2"
-    });
-    expect(response.status).to.eql(200);
-  });
+// describe("POST /recipe", function () {
+
+//   it("Returns 200 for valid recipe", async function () {
+//     let v = new Ingredient();
+//     v.id = '0';
+//     v.name = 'Milk';
+//     var quantity = '3';
+//     var x = [[v,quantity]];
+//     var jsonIngredient = JSON.stringify(x);
+//     const response = await request(app).post("/api/recipes").send({
+//       "name": "Apple pie",
+//       "instructions" : "Cut, Mix, Put",
+//       "tags" : "Good",
+//       "ingredients" : x
+//     });
+//     expect(response.status).to.eql(200);
+//   });
 
   // it("Returns 400 for invalid recipe", async function () {
   //   const response = await request(app).post("/api/recipes").send({
@@ -98,4 +113,4 @@ describe("POST /recipe", function () {
   //   });
   //   expect(response.status).to.eql(400);
   // });
-});
+// });

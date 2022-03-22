@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const { DatabaseObject } = require('../databaseObject');
+const { Ingredient } = require ('../templates/ingredients.js');
 
 class Recipe extends DatabaseObject {
     constructor(id=null) {
@@ -23,33 +24,33 @@ function validateRecipeInstructions(instructions) {
 function validateRecipeTags(tag) {
     return ( tag.length >=3 && tag.length <= 25 );
 }
-function validateRecipeIngredients(ingridients)
+function validateRecipeIngredients(recipeIngredient)
 {
-    return ( ingridients.length > 2 && checkRecipeIngredientFormat(ingridients));
+    return checkRecipeIngredientFormat(recipeIngredient);
 }
 
-function checkRecipeIngredientFormat(format)
+function checkRecipeIngredientFormat(recipeIngredient)
 {
-    var splitFormat = format.split(';');
-    if (splitFormat.every(checkFormat))
-    {
-        return true;
-    }
-    return false;
-}
-
-function checkFormat(f)
-{
-    var w = f.split(':');
-    if(w.length != 2)
+    if ( recipeIngredient.length < 0)
     {
         return false;
     }
-    if (f.match(/([0-9]+):([0-9]+)/) != null)
+    for( let i = 0; i < recipeIngredient.length; i++)
     {
-        return true;
+        if ( recipeIngredient[i].length != 2)
+        {
+            return false;
+        }
+        if (!(recipeIngredient[i][0] instanceof Ingredient))
+        {
+            return false;
+        }
+        if (!( typeof recipeIngredient[i][1] == 'string'))
+        {
+            return false;
+        }
     }
-    return false;
+    return true;
 }
 
 const recipeFormat = {
