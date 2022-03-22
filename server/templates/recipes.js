@@ -56,7 +56,7 @@ const recipeFormat = {
     recipe_name: { required: true, type: 'string', lambda: validateRecipeName },
     recipe_instructions: { required: false, type: 'string', lambda: validateRecipeInstructions },
     recipe_tags: { required: false, type: 'string', lambda: validateRecipeTags },
-    recipe_ingredients : {required: true, type: 'string', lambda: validateRecipeIngredients}
+    recipe_ingredients : {required: true, type: 'array', lambda: validateRecipeIngredients}
 };
 
 module.exports = { Recipe, validateRecipeName, validateRecipeInstructions,

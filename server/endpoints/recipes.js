@@ -6,7 +6,7 @@ const recipePostFormat = {
     name: { required: true, type: 'string', lambda: validateRecipeName },
     instructions: { required: false, type: 'string', lambda: validateRecipeInstructions },
     tags: { required: false, type: 'string', lambda: validateRecipeTags },
-    ingredients : {required: true, type: 'string', lambda: validateRecipeIngredients}
+    ingredients : {required: true, type: 'array', lambda: validateRecipeIngredients}
 };
 
 class ApiRecipeObject extends ApiObject {
@@ -29,14 +29,6 @@ class ApiRecipeObject extends ApiObject {
         }
         recipe=recipe.serialize();
         return recipe;
-    }
-
-    async delete(req) { 
-        throw new ApiError(405, 'method unsupported');
-    }
-
-    async put(req) {
-        throw new ApiError(405, 'method unsupported');
     }
 }
 
