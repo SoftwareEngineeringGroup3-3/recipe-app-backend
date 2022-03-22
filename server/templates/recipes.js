@@ -13,7 +13,7 @@ class Recipe extends DatabaseObject {
 }
 
 function validateRecipeName(name) {
-    return (name.length >= 5 && name.length <= 100);
+    return (name.length >= 3 && name.length <= 100);
 }
 
 function validateRecipeInstructions(instructions) {
