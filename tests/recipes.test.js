@@ -1,11 +1,10 @@
 const { validateRecipeName, validateRecipeInstructions, 
-  validateRecipeTags, validateRecipeIngredients} = require ('../server/templates/recipes.js');
+  validateRecipeTags, validateRecipeIngredients, convertDataIngredients} = require ('../server/templates/recipes.js');
 const request = require("supertest");//("http://localhost:5000");
 const app = require('../server/app.js'); //reference to server.js
 const sqlite = require('better-sqlite3');
 const expect = require("chai").expect;
-const { Ingredient } = require ('../server/templates/ingredients');
-
+const { Ingredient } = require ('../server/templates/ingredients.js');
 test('Empty word is invalid name', () => {
     expect(validateRecipeName("")).to.eql(false);
 });
@@ -86,6 +85,31 @@ test('Valid recipe ingredients ', ()=> {
   expect(validateRecipeIngredients(x)).to.eql(true);
 });
 
+test('Valid convert of ingredients ', ()=> {
+  let v = new Ingredient();
+  v.id = '1';
+  v.name = 'Milk';
+  var quantity = '3';
+  var x = [[v,quantity]];
+  var result = convertDataIngredients(x);
+
+  expect(result).to.eql('1:3;');
+});
+
+test('Valid convert of ingredients ', ()=> {
+  let v = new Ingredient();
+  v.id = '1';
+  v.name = 'Milk';
+  var quantity = '3';
+  let v2 = new Ingredient();
+  v2.id = '2';
+  v2.name = 'Milk2';
+  var quantity2 = '2';
+  var x = [[v,quantity], [v2,quantity2]];
+  var result = convertDataIngredients(x);
+
+  expect(result).to.eql('1:3;2:2;');
+});
 
 // describe("POST /recipe", function () {
 
@@ -114,26 +138,4 @@ test('Valid recipe ingredients ', ()=> {
   //   });
   //   expect(response.status).to.eql(400);
   // });
-// });
-
-const { convertDataIngredients } = require ('../server/enpoints/recipes.js');
-
-
-test('Valid convert of ingredients ', ()=> {
-  let v = new Ingredient();
-  v.id = '1';
-  v.name = 'Milk';
-  var quantity = '3';
-  var x = [[v,quantity]];
-  
-  expect(convertDataIngredients(x)).to.eql('1:3;');
-});
-
-// test('InValid convert of ingredients ', ()=> {
-//   let v = new Ingredient();
-//   v.id = '1';
-//   v.name = 'Milk';
-//   var quantity = '3';
-//   var x = [[v,quantity]];
-//   expect(convertDataIngredients(x)).to.eql(false);
 // });

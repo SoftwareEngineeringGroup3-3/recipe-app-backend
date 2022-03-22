@@ -32,17 +32,4 @@ class ApiRecipeObject extends ApiObject {
     }
 }
 
-function convertDataIngredients(recipeIngredient)
-{
-    var finalVersion = "";
-    for( let i = 0; i < recipeIngredient.length; i++)
-    {
-        finalVersion += (recipeIngredient[i][0].id).toString();
-        finalVersion += ':';
-        finalVersion += recipeIngredient[i][1];
-        finalVersion += ';';
-    }
-    return finalVersion;
-}
-
-module.exports = {ApiRecipeObject, convertDataIngredients };
+module.exports = ApiRecipeObject;

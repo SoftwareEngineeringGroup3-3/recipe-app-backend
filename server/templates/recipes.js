@@ -60,5 +60,18 @@ const recipeFormat = {
     recipe_ingredients : {required: true, type: 'array', lambda: validateRecipeIngredients}
 };
 
+const convertDataIngredients = (recipeIngredient) => 
+{
+    var finalVersion = "";
+    for( let i = 0; i < recipeIngredient.length; i++)
+    {
+        finalVersion += (recipeIngredient[i][0].id).toString();
+        finalVersion += ':';
+        finalVersion += recipeIngredient[i][1];
+        finalVersion += ';';
+    }
+    return finalVersion;
+}
+
 module.exports = { Recipe, validateRecipeName, validateRecipeInstructions,
-    validateRecipeTags, validateRecipeIngredients, recipeFormat  };
+    validateRecipeTags, validateRecipeIngredients, recipeFormat, convertDataIngredients  };
