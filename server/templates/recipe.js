@@ -4,7 +4,7 @@ const { DatabaseObject } = require('../databaseObject');
 class Recipe extends DatabaseObject {
     constructor(id=null) {
         super('recipes', id, !!id);
-        this.bindProperty('id','recipe_id')
+        this.bindProperty('id','recipe_id', this.id)
         this.bindProperty('name', 'recipe_name');
         this.bindProperty('instructions', 'recipe_instructions');
         this.bindProperty('tags', 'recipe_tags');
