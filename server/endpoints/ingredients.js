@@ -5,7 +5,6 @@ const { Ingredient, validateName, ingredientFormat } = require ('../templates/in
 const ingredientPostFormat = {
     id: {required: false, type: 'number', lambda: () => { return true; }},
     name: { required: true, type: 'string', lambda: validateName },
-    photo: { required: false, type: 'string',lambda: () => { return true; }}
 };
 
 
@@ -34,7 +33,6 @@ class ApiIngredientObject extends ApiObject {
         let ingredient = new Ingredient();
         //ingredient.id=data.id; //Is this line needed? The API specification seems to suggest so, yet so it did for Registration but we removed this line from that.
         ingredient.name=data.name;
-        ingredient.photo=data.photo;
         ingredient.insert(req.database);
         if(!ingredient.id)
         {
