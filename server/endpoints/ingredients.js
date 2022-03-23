@@ -4,8 +4,7 @@ const { User } = require('../templates/user.js');
 
 const ingredientPostFormat = {
     id: {required: false, type: 'number', lambda: () => { return true; }},
-    name: { required: true, type: 'string', lambda: validateName },
-    photo: { required: false, type: 'string',lambda: () => { return true; }}
+    name: { required: true, type: 'string', lambda: validateName }
 };
 
 
@@ -15,9 +14,9 @@ const ingredientFetchFormat = {
 
 const ingredientPutFormat = {
     id: {required: true, type: 'number', lambda: () => { return true; }},
-    name: { required: false, type: 'string', lambda: validateName },
-    photo: { required: false, type: 'string',lambda: () => { return true; }}
+    name: { required: false, type: 'string', lambda: validateName }
 };
+
 
 const checkDataUniqueness = (req, ingredientName) => {
     const ingredientsWithSameName = req.database.prepare('SELECT ingredient_id FROM ingredients WHERE ingredient_name = ?').all(ingredientName);
@@ -49,9 +48,7 @@ class ApiIngredientObject extends ApiObject {
         const data = this.parseAndValidate(req.body, ingredientPostFormat, true);
         checkDataUniqueness(req,data.name);
         let ingredient = new Ingredient();
-        //ingredient.id=data.id; //Is this line needed? The API specification seems to suggest so, yet so it did for Registration but we removed this line from that.
         ingredient.name=data.name;
-        ingredient.photo=data.photo;
         ingredient.insert(req.database);
         if(!ingredient.id)
         {
@@ -97,14 +94,17 @@ class ApiIngredientObject extends ApiObject {
         {
             oldIngredient.name=data.name;
         }
-        if(data.photo!=null)
-        {
-            oldIngredient.photo=data.photo;
-        }
         oldIngredient.sync(req.database);
 
         return oldIngredient.serialize();
     }
+
+    async get(req){
+        console.log("endpoints/ingredients: recieved get");
+        var ingredients = req.database.prepare("Select ingredient_id as id, ingredient_name as name from ingredients").all();
+        return ingredients;
+    }
+
 }
 
 module.exports = ApiIngredientObject;

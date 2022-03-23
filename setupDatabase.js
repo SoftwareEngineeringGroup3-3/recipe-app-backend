@@ -7,7 +7,6 @@ db.prepare(`CREATE TABLE IF NOT EXISTS users (
     user_name VARCHAR(255) NOT NULL,
     user_password VARCHAR(255) NOT NULL,
     user_email VARCHAR(255) NOT NULL,
-    user_photo VARCHAR(255),
     user_creation INTEGER NOT NULL,
     user_last_login INTEGER,
     user_last_ip VARCHAR(255)
@@ -18,8 +17,7 @@ db.prepare(`CREATE TABLE IF NOT EXISTS recipes (
     recipe_name VARCHAR(255) NOT NULL,
     recipe_instructions TEXT,
     recipe_ingredients TEXT NOT NULL,
-    recipe_tags VARCHAR(255),
-    recipe_photo VARCHAR(255)
+    recipe_tags VARCHAR(255)
 )`).run();
 
 db.prepare(`CREATE TABLE IF NOT EXISTS shops (
@@ -68,8 +66,7 @@ db.prepare(`CREATE TABLE IF NOT EXISTS user_tokens (
 
 db.prepare(`CREATE TABLE IF NOT EXISTS ingredients (
     ingredient_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    ingredient_name VARCHAR(255) NOT NULL,
-    ingredient_photo VARCHAR(255)
+    ingredient_name VARCHAR(255) NOT NULL
 )`).run();
 
 db.prepare(`INSERT INTO users ( 
