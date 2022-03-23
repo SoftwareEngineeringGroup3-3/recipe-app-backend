@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt');
 const { DatabaseObject } = require('../databaseObject');
 const { Ingredient } = require ('../templates/ingredients.js');
+const sqlite = require('better-sqlite3');
+const { ApiError } = require('../apiobject');
 
 class Recipe extends DatabaseObject {
     constructor(id=null) {
@@ -13,6 +15,8 @@ class Recipe extends DatabaseObject {
     }
 }
 
+const tags_enum = Object.freeze({ VEGE: "vegetarian", GLUTEN_FREE: "gluten free", LOW_CALORIE: "low calorie", NO_LACTOSE: "no lactose" });
+
 function validateRecipeName(name) {
     return (name.length >= 3 && name.length <= 100);
 }
@@ -21,31 +25,36 @@ function validateRecipeInstructions(instructions) {
     return ( instructions.length <= 1000);
 }
 
-function validateRecipeTags(tag) {
-    return ( tag.length >=3 && tag.length <= 25 );
-}
-function validateRecipeIngredients(recipeIngredient)
-{
-    return checkRecipeIngredientFormat(recipeIngredient);
+function validateRecipeTags(tags) {
+    for(const tag of tags){
+        if(tag != tags_enum.VEGE && tag != tags_enum.GLUTEN_FREE && tag != tags_enum.LOW_CALORIE && tag != tags_enum.NO_LACTOSE) return false;
+    }
+    return true;
 }
 
-function checkRecipeIngredientFormat(recipeIngredient)
+function validateRecipeIngredients(recipeIngredients)
 {
-    if ( recipeIngredient.length < 0)
+    return checkRecipeIngredientFormat(recipeIngredients);
+}
+
+function checkRecipeIngredientFormat(recipeIngredients)
+{
+    if ( recipeIngredients.length <= 0)
     {
         return false;
     }
-    for( let i = 0; i < recipeIngredient.length; i++)
+    const db = new sqlite('database.db');
+    for(const ingredient of recipeIngredients)
     {
-        if ( recipeIngredient[i].length != 2)
+        if (ingredient.ingredient.id == null || ingredient.ingredient.id == undefined)
         {
             return false;
+        } else {
+
+            const ingr = new Ingredient(ingredient.ingredient.id);
+            if(!ingr.fetch(db)) return false;
         }
-        if (!(recipeIngredient[i][0] instanceof Ingredient))
-        {
-            return false;
-        }
-        if (!( typeof recipeIngredient[i][1] == 'string'))
+        if (ingredient.quantity == "" || (typeof ingredient.quantity) != "string" || parseInt(ingredient.quantity) <= 0)
         {
             return false;
         }
@@ -60,18 +69,30 @@ const recipeFormat = {
     recipe_ingredients : {required: true, type: 'array', lambda: validateRecipeIngredients}
 };
 
-const convertDataIngredients = (recipeIngredient) => 
+const convertDataIngredients = (recipeIngredients) => 
 {
-    var finalVersion = "";
-    for( let i = 0; i < recipeIngredient.length; i++)
+    let finalVersion = "";
+    for(const ingredient of recipeIngredients)
     {
-        finalVersion += (recipeIngredient[i][0].id).toString();
+        finalVersion += (ingredient.ingredient.id).toString();
         finalVersion += ':';
-        finalVersion += recipeIngredient[i][1];
+        finalVersion += ingredient.quantity;
         finalVersion += ';';
     }
-    return finalVersion;
+    return finalVersion.substring(0, finalVersion.length - 1);
 }
 
+const convertDataTags = (recipeTags) => {
+    let finalVersion = "";
+    for(const tag of recipeTags)
+    {
+        finalVersion += tag;
+        finalVersion += ';';
+    }
+    return finalVersion.substring(0, finalVersion.length - 1);
+}
+
+
+
 module.exports = { Recipe, validateRecipeName, validateRecipeInstructions,
-    validateRecipeTags, validateRecipeIngredients, recipeFormat, convertDataIngredients  };
+    validateRecipeTags, validateRecipeIngredients, recipeFormat, convertDataIngredients, convertDataTags  };

@@ -1,12 +1,12 @@
 const { ApiObject, ApiError } = require ('../apiobject.js');
 const { Recipe, validateRecipeName,validateRecipeInstructions, validateRecipeTags, 
-    validateRecipeIngredients, recipeFormat } = require ('../templates/recipes');
+    validateRecipeIngredients, recipeFormat, convertDataIngredients, convertDataTags } = require ('../templates/recipes');
 
 const recipePostFormat = {
     name: { required: true, type: 'string', lambda: validateRecipeName },
     instructions: { required: false, type: 'string', lambda: validateRecipeInstructions },
-    tags: { required: false, type: 'string', lambda: validateRecipeTags },
-    ingredients : {required: true, type: 'array', lambda: validateRecipeIngredients}
+    tags: { required: false, type: 'object', lambda: validateRecipeTags },
+    ingredients : {required: true, type: 'object', lambda: validateRecipeIngredients}
 };
 
 class ApiRecipeObject extends ApiObject {
@@ -20,15 +20,14 @@ class ApiRecipeObject extends ApiObject {
         var recipe = new Recipe();
         recipe.name = data.name;
         recipe.instructions = data.instructions;
-        recipe.tags = data.tags;
+        recipe.tags = convertDataTags(data.tags);
         recipe.ingredients = convertDataIngredients(data.ingredients);
         recipe.insert(req.database);
         if(!recipe.id)
         {
             throw new Error('Recipe creation failed');
         }
-        recipe=recipe.serialize();
-        return recipe;
+        return data;
     }
 }
 

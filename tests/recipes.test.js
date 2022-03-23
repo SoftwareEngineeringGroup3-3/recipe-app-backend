@@ -1,10 +1,12 @@
 const { validateRecipeName, validateRecipeInstructions, 
-  validateRecipeTags, validateRecipeIngredients, convertDataIngredients} = require ('../server/templates/recipes.js');
+  validateRecipeTags, validateRecipeIngredients, convertDataIngredients, convertDataTags} = require ('../server/templates/recipes.js');
 const request = require("supertest");//("http://localhost:5000");
 const app = require('../server/app.js'); //reference to server.js
 const sqlite = require('better-sqlite3');
 const expect = require("chai").expect;
 const { Ingredient } = require ('../server/templates/ingredients.js');
+
+
 test('Empty word is invalid name', () => {
     expect(validateRecipeName("")).to.eql(false);
 });
@@ -14,7 +16,7 @@ test("Name : 'Recipe for apple pie' is valid", () =>{
 });
 
 test("Invalid name", () =>{
-  var longName = 'x';
+  let longName = 'x';
   i = 0;
   while(i<100)
   {
@@ -29,7 +31,7 @@ test('Valid recipe instructions', () => {
 });
 
 test('Too long recipe instructions', () => {
-  var tooLongInstruction = 'x';
+  let tooLongInstruction = 'x';
   i = 0;
   while(i<=1001)
   {
@@ -39,76 +41,102 @@ test('Too long recipe instructions', () => {
   expect(validateRecipeInstructions(tooLongInstruction)).to.eql(false);
 });
 
-test('Too short Recipe Tag', () => {
-  expect(validateRecipeTags('xy')).to.eql(false);
+test('Wrong tag', () => {
+  expect(validateRecipeTags(["sweet"])).to.eql(false);
 });
 
-test('Too long Recipe Tag', () => {
-  var tooLongtag = 'x';
-  i = 0;
-  while(i<=26)
-  {
-    tooLongtag +='x'
-    i++;
-  }
-  expect(validateRecipeTags(tooLongtag)).to.eql(false);
+test('Wrong tag 2', () => {
+  expect(validateRecipeTags(["sweet", "vegetarian"])).to.eql(false);
 });
+
 
 test('Valid Recipe Tag', () => {
-  expect(validateRecipeTags('Vege/Bio')).to.eql(true);
+  expect(validateRecipeTags(["vegetarian"])).to.eql(true);
 });
 
-test('Invalid recipe ingredients', ()=> {
+test('Valid Recipe Tag 2', () => {
+  expect(validateRecipeTags(["vegetarian", "gluten free"])).to.eql(true);
+});
+
+test('Invalid recipe ingredients (empty)', ()=> {
+  expect(validateRecipeIngredients([])).to.eql(false);
+});
+
+test('Invalid recipe ingredients (invalid ID)', ()=> {
   let v = new Ingredient();
-  v.id = '0';
-  v.name = '';
-  var quantity = 2;
-  var x = [[v,quantity]];
+  v.id = null;
+  v.name = 'Apple';
+  let quant = "2kg";
+  let x = [{ ingredient: v, quantity: quant}];
   expect(validateRecipeIngredients(x)).to.eql(false);
 });
 
-test('Invalid recipe ingredients', ()=> {
+test('Invalid recipe ingredients (not in the db)', ()=> {
   let v = new Ingredient();
-  v.id = '0';
-  v.name = '';
-  var quantity = 2;
-  var x = [[v,quantity]];
+  v.id = 431241423;
+  v.name = 'Apple';
+  let quant = "2kg";
+  let x = [{ ingredient: v, quantity: quant}];
   expect(validateRecipeIngredients(x)).to.eql(false);
 });
 
-test('Valid recipe ingredients ', ()=> {
+test('Invalid recipe ingredients (invalid quantity)', ()=> {
+  const db = new sqlite('database.db');
+  let v = new Ingredient();
+  v.name = 'Apple';
+  let quant = "";
+  let x = [{ ingredient: v, quantity: quant}];
+  v.insert(db);
+  expect(validateRecipeIngredients(x)).to.eql(false);
+  v.delete(db);
+});
+
+test('Invalid recipe ingredients (invalid quantity 2)', ()=> {
+  const db = new sqlite('database.db');
+  let v = new Ingredient();
+  v.name = 'Apple';
+  let quant = 2;
+  let x = [{ ingredient: v, quantity: quant}];
+  v.insert(db);
+  expect(validateRecipeIngredients(x)).to.eql(false);
+  v.delete(db);
+});
+
+test('Invalid recipe ingredients (invalid quantity 3)', ()=> {
+  const db = new sqlite('database.db');
+  let v = new Ingredient();
+  v.name = 'Apple';
+  let quant = "-1";
+  let x = [{ ingredient: v, quantity: quant}];
+  v.insert(db);
+  expect(validateRecipeIngredients(x)).to.eql(false);
+  v.delete(db);
+});
+
+test('Valid convert of ingredients', ()=> {
   let v = new Ingredient();
   v.id = '1';
   v.name = 'Milk';
-  var quantity = '3';
-  var x = [[v,quantity]];
-  expect(validateRecipeIngredients(x)).to.eql(true);
+  let quant = '3';
+  let x = [{ ingredient: v, quantity: quant}];
+  let result = convertDataIngredients(x);
+
+  expect(result).to.eql('1:3');
 });
 
 test('Valid convert of ingredients ', ()=> {
   let v = new Ingredient();
   v.id = '1';
   v.name = 'Milk';
-  var quantity = '3';
-  var x = [[v,quantity]];
-  var result = convertDataIngredients(x);
-
-  expect(result).to.eql('1:3;');
-});
-
-test('Valid convert of ingredients ', ()=> {
-  let v = new Ingredient();
-  v.id = '1';
-  v.name = 'Milk';
-  var quantity = '3';
+  let quant = '3';
   let v2 = new Ingredient();
   v2.id = '2';
   v2.name = 'Milk2';
-  var quantity2 = '2';
-  var x = [[v,quantity], [v2,quantity2]];
-  var result = convertDataIngredients(x);
+  let quant2 = '2';
+  let x = [{ ingredient: v, quantity: quant}, { ingredient: v2, quantity: quant2}];
+  let result = convertDataIngredients(x);
 
-  expect(result).to.eql('1:3;2:2;');
+  expect(result).to.eql('1:3;2:2');
 });
 
 // describe("POST /recipe", function () {
@@ -117,9 +145,9 @@ test('Valid convert of ingredients ', ()=> {
 //     let v = new Ingredient();
 //     v.id = '0';
 //     v.name = 'Milk';
-//     var quantity = '3';
-//     var x = [[v,quantity]];
-//     var jsonIngredient = JSON.stringify(x);
+//     let quantity = '3';
+//     let x = [[v,quantity]];
+//     let jsonIngredient = JSON.stringify(x);
 //     const response = await request(app).post("/api/recipes").send({
 //       "name": "Apple pie",
 //       "instructions" : "Cut, Mix, Put",

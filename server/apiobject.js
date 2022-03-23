@@ -29,11 +29,11 @@ class ApiObject {
             const type = validation[field].type;
             const lambda = validation[field].lambda;
 
-            if(enforceReq && required && object[field]==null) throw new ApiError(400, `Parameter ${field} is required!`);
+            if(enforceReq && required && object[field]==null) throw new ApiError(403, `Parameter ${field} is required!`);
 
             if(object[field]) {
-                if(type && (typeof object[field]) !== type) throw new ApiError (400, `Parameter ${field} requires type ${type}`);
-                if(lambda && !lambda(object[field])) throw new ApiError (400, `Parameter ${field} has invalid format`);
+                if(type && (typeof object[field]) !== type) throw new ApiError (403, `Parameter ${field} requires type ${type}`);
+                if(lambda && !lambda(object[field])) throw new ApiError (403, `Parameter ${field} has invalid format`);
             }
         }
     }
