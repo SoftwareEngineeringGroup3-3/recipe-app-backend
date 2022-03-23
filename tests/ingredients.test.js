@@ -15,7 +15,7 @@ describe("POST /ingredients", function () {
         "photo": ""
       });
       
-      expect(response.status).to.eql(400);
+      expect(response.status).to.eql(403);
     });
 
     it("should return 403 for ingredient with existing name",async function () {

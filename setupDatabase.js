@@ -7,7 +7,6 @@ db.prepare(`CREATE TABLE IF NOT EXISTS users (
     user_name VARCHAR(255) NOT NULL,
     user_password VARCHAR(255) NOT NULL,
     user_email VARCHAR(255) NOT NULL,
-    user_photo VARCHAR(255),
     user_creation INTEGER NOT NULL,
     user_last_login INTEGER,
     user_last_ip VARCHAR(255)

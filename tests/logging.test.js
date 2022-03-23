@@ -28,7 +28,7 @@ describe("POST /logging", function () {
             "username": "user!name",
             "password": "password1"
         });
-        expect(response.status).to.eql(400);
+        expect(response.status).to.eql(403);
     });
 
     it("Returns 'Parameter username has invalid format' error message if username format invalid", async function () {
