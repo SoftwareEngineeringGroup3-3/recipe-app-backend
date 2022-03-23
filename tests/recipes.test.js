@@ -139,31 +139,121 @@ test('Valid convert of ingredients ', ()=> {
   expect(result).to.eql('1:3;2:2');
 });
 
-// describe("POST /recipe", function () {
+describe("POST /recipe", function () {
+  it("Returns 200 for valid recipe", async function () {
+    const db = new sqlite('database.db');
+    let ingredient = new Ingredient();
+    ingredient.name = "Tomato";
+    ingredient.insert(db);
+    const response = await request(app).post("/api/recipes").send({
+      "name": "Spaghetti",
+      "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
+      "ingredients": [
+          {
+              "ingredient":{
+                  "id": ingredient.id,
+                  "name": "Tomato"
+              },
+              "quantity": "150g"
+          }
+      ],
+      "tags": [
+          "vegetarian",
+          "low calorie"
+      ]
+  });
+    expect(response.status).to.eql(200);
+    ingredient.delete(db);
+  });
 
-//   it("Returns 200 for valid recipe", async function () {
-//     let v = new Ingredient();
-//     v.id = '0';
-//     v.name = 'Milk';
-//     let quantity = '3';
-//     let x = [[v,quantity]];
-//     let jsonIngredient = JSON.stringify(x);
-//     const response = await request(app).post("/api/recipes").send({
-//       "name": "Apple pie",
-//       "instructions" : "Cut, Mix, Put",
-//       "tags" : "Good",
-//       "ingredients" : x
-//     });
-//     expect(response.status).to.eql(200);
-//   });
+  it("Returns 403 for invalid recipe 1", async function () {
+    const db = new sqlite('database.db');
+    let ingredient = new Ingredient();
+    ingredient.name = "Tomato";
+    ingredient.insert(db);
+    const response = await request(app).post("/api/recipes").send({
+      "name": "",
+      "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
+      "ingredients": [
+          {
+              "ingredient":{
+                  "id": 29,
+                  "name": "Tomato"
+              },
+              "quantity": "150g"
+          }
+      ],
+      "tags": [
+          "vegetarian",
+          "low calorie"
+      ]
+  });
+    expect(response.status).to.eql(403);
+    ingredient.delete(db);
+  });
 
-  // it("Returns 400 for invalid recipe", async function () {
-  //   const response = await request(app).post("/api/recipes").send({
-  //     "name": "",
-  //     "instructions" : "",
-  //     "tags" : "",
-  //     "ingredients" : ""
-  //   });
-  //   expect(response.status).to.eql(400);
-  // });
-// });
+  it("Returns 403 for invalid recipe 2", async function () {
+    const db = new sqlite('database.db');
+    let ingredient = new Ingredient();
+    ingredient.name = "Tomato";
+    ingredient.insert(db);
+    const response = await request(app).post("/api/recipes").send({
+      "name": "Spaghetti",
+      "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
+      "ingredients": [],
+      "tags": [
+          "vegetarian",
+          "low calorie"
+      ]
+  });
+    expect(response.status).to.eql(403);
+    ingredient.delete(db);
+  });
+
+  it("Returns 403 for invalid recipe 3", async function () {
+    const db = new sqlite('database.db');
+    let ingredient = new Ingredient();
+    ingredient.name = "Tomato";
+    ingredient.insert(db);
+    const response = await request(app).post("/api/recipes").send({
+      "name": "Spaghetti",
+      "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
+      "ingredients": [
+          {
+              "ingredient":{
+                  "id": 29,
+                  "name": "Tomato"
+              },
+              "quantity": "150g"
+          }
+      ],
+      "tags": [
+          "sweet",
+          "low calorie"
+      ]
+  });
+    expect(response.status).to.eql(403);
+    ingredient.delete(db);
+  });
+
+  it("Returns 403 for invalid recipe 4", async function () {
+    const response = await request(app).post("/api/recipes").send({
+      "name": "Spaghetti",
+      "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
+      "ingredients": [
+          {
+              "ingredient":{
+                  "id": 432123143,
+                  "name": "Tomato"
+              },
+              "quantity": "150g"
+          }
+      ],
+      "tags": [
+          "vegetarian",
+          "low calorie"
+      ]
+  });
+    expect(response.status).to.eql(403);
+  });
+});
