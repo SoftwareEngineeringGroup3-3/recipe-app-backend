@@ -17,11 +17,6 @@ const ingredientPutFormat = {
     name: { required: false, type: 'string', lambda: validateName }
 };
 
-const ingredientGetFormat = {
-    id: {required: true, type: 'number', lambda: () => { return true; }},
-    name: { required: false, type: 'string', lambda: validateName },
-};
-
 
 const checkDataUniqueness = (req, ingredientName) => {
     const ingredientsWithSameName = req.database.prepare('SELECT ingredient_id FROM ingredients WHERE ingredient_name = ?').all(ingredientName);
@@ -87,8 +82,6 @@ class ApiIngredientObject extends ApiObject {
 
     async get(req){
         console.log("endpoints/ingredients: recieved get");
-        this.enforceContentType(req,'application/json');
-        const data=this.parseAndValidate(req.body,ingredientGetFormat, true);
         var ingredients = req.database.prepare("Select ingredient_id as id, ingredient_name as name from ingredients").all();
         return ingredients;
     }
