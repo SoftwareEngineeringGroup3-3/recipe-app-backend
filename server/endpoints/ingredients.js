@@ -1,9 +1,8 @@
 const { ApiObject, ApiError } = require ('../apiobject.js');
 const { Ingredient, validateName, ingredientFormat } = require ('../templates/ingredients.js');
-//const { verifyToken } = require ('../templates/token.js'); //Don't know if this is needed for user type (admin or normal user) validation
+const { User } = require('../templates/user.js');
 
 const ingredientPostFormat = {
-    id: {required: false, type: 'number', lambda: () => { return true; }},
     name: { required: true, type: 'string', lambda: validateName }
 };
 
@@ -27,6 +26,11 @@ const checkDataUniqueness = (req, ingredientName) => {
 class ApiIngredientObject extends ApiObject {
     async post (req) {
         console.log("endpoints/ingredients: recieved post")
+
+        if(!req.user || req.user.isAdmin != 1) {
+            throw new ApiError(401, 'User is not authorized!');
+        }
+
         this.enforceContentType(req, 'application/json');
         const data = this.parseAndValidate(req.body, ingredientPostFormat, true);
         checkDataUniqueness(req,data.name);
@@ -43,6 +47,10 @@ class ApiIngredientObject extends ApiObject {
 
     async delete(req){
         console.log("endpoints/ingredients: recieved delete")
+
+        if(!req.user || req.user.isAdmin != 1) {
+            throw new ApiError(401, 'User is not authorized!');
+        }
       
         this.enforceContentType(req, 'application/json');
         const data=this.parseAndValidate(req.body,ingredientFetchFormat, true);
@@ -59,6 +67,10 @@ class ApiIngredientObject extends ApiObject {
     async put(req){
         console.log("endpoints/ingredients: recieved put");
 
+        if(!req.user || req.user.isAdmin != 1) {
+            throw new ApiError(401, 'User is not authorized!');
+        }
+
         this.enforceContentType(req,'application/json');
         const data=this.parseAndValidate(req.body,ingredientPutFormat, true);
 
@@ -67,9 +79,6 @@ class ApiIngredientObject extends ApiObject {
         {
             throw new ApiError(404, 'Ingredient not found')
         }
-
-        // if(typeof data.photo == undefined)
-        //     throw new ApiError(200,"success lol");
         
         if(data.name!=null) //These ifs check if the packet didn't cotain the given field (i.e. doesn't need to be updated)
         {
@@ -82,7 +91,12 @@ class ApiIngredientObject extends ApiObject {
 
     async get(req){
         console.log("endpoints/ingredients: recieved get");
-        var ingredients = req.database.prepare("Select ingredient_id as id, ingredient_name as name from ingredients").all();
+
+        if(!req.user || req.user.isAdmin != 1) {
+            throw new ApiError(401, 'User is not authorized!');
+        }
+
+        var ingredients = req.database.prepare("SELECT ingredient_id AS id, ingredient_name AS name FROM ingredients").all();
         return ingredients;
     }
 

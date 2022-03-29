@@ -140,7 +140,7 @@ test('Valid convert of ingredients ', ()=> {
 });
 
 describe("POST /recipe", function () {
-  it("Returns 200 for valid recipe", async function () {
+  it("Returns 401 for user not logged in", async function () {
     const db = new sqlite('database.db');
     let ingredient = new Ingredient();
     ingredient.name = "Tomato";
@@ -161,17 +161,104 @@ describe("POST /recipe", function () {
           "vegetarian",
           "low calorie"
       ]
+    });
+    expect(response.status).to.eql(401);
+    ingredient.delete(db);
   });
+
+  it("Returns 401 for user not admin", async function () {
+    await request(app).post("/api/registration").send({
+        "username": "Matt",
+        "password": "matt1",
+        "repPassword": "matt1",
+        "email": "mail1@mail.pl"
+    });
+
+    const token = await request(app).post("/api/login").send({
+            "username": "Matt",
+            "password": "matt1"
+        }).then((response) => response.token);
+
+    const security_header = `security_header=${token}`;
+    const headers = {
+      cookies: `${security_header}; path=/`
+    }
+
+    const db = new sqlite('database.db');
+    let ingredient = new Ingredient();
+    ingredient.name = "Tomato";
+    ingredient.insert(db);
+    const response = await request(app).post("/api/recipes").set(headers).send({
+      "name": "Spaghetti",
+      "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
+      "ingredients": [
+          {
+              "ingredient":{
+                  "id": ingredient.id,
+                  "name": "Tomato"
+              },
+              "quantity": "150g"
+          }
+      ],
+      "tags": [
+          "vegetarian",
+          "low calorie"
+      ]
+    });
+    expect(response.status).to.eql(401);
+    ingredient.delete(db);
+  });
+
+  it("Returns 200 for valid recipe", async function () {
+    const res_login = await request(app).post("/api/login").send({
+        "username": "Matthew",
+        "password": "Mateusz"
+    });
+
+    const headers = {
+        Cookie: `security_header=${res_login._body.security_header}; path=/`
+    }
+
+    const db = new sqlite('database.db');
+    let ingredient = new Ingredient();
+    ingredient.name = "Tomato";
+    ingredient.insert(db);
+    const response = await request(app).post("/api/recipes").set(headers).send({
+      "name": "Spaghetti",
+      "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
+      "ingredients": [
+          {
+              "ingredient":{
+                  "id": ingredient.id,
+                  "name": "Tomato"
+              },
+              "quantity": "150g"
+          }
+      ],
+      "tags": [
+          "vegetarian",
+          "low calorie"
+      ]
+    });
     expect(response.status).to.eql(200);
     ingredient.delete(db);
   });
 
   it("Returns 403 for invalid recipe 1", async function () {
+    const res_login = await request(app).post("/api/login").send({
+        "username": "Matthew",
+        "password": "Mateusz"
+    });
+
+    const headers = {
+        Cookie: `security_header=${res_login._body.security_header}; path=/`
+    }
+
     const db = new sqlite('database.db');
     let ingredient = new Ingredient();
     ingredient.name = "Tomato";
     ingredient.insert(db);
-    const response = await request(app).post("/api/recipes").send({
+    const response = await request(app).post("/api/recipes").set(headers).send({
       "name": "",
       "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
       "ingredients": [
@@ -193,11 +280,20 @@ describe("POST /recipe", function () {
   });
 
   it("Returns 403 for invalid recipe 2", async function () {
+    const res_login = await request(app).post("/api/login").send({
+        "username": "Matthew",
+        "password": "Mateusz"
+    });
+
+    const headers = {
+        Cookie: `security_header=${res_login._body.security_header}; path=/`
+    }
+
     const db = new sqlite('database.db');
     let ingredient = new Ingredient();
     ingredient.name = "Tomato";
     ingredient.insert(db);
-    const response = await request(app).post("/api/recipes").send({
+    const response = await request(app).post("/api/recipes").set(headers).send({
       "name": "Spaghetti",
       "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
       "ingredients": [],
@@ -211,11 +307,20 @@ describe("POST /recipe", function () {
   });
 
   it("Returns 403 for invalid recipe 3", async function () {
+    const res_login = await request(app).post("/api/login").send({
+        "username": "Matthew",
+        "password": "Mateusz"
+    });
+
+    const headers = {
+        Cookie: `security_header=${res_login._body.security_header}; path=/`
+    }
+
     const db = new sqlite('database.db');
     let ingredient = new Ingredient();
     ingredient.name = "Tomato";
     ingredient.insert(db);
-    const response = await request(app).post("/api/recipes").send({
+    const response = await request(app).post("/api/recipes").set(headers).send({
       "name": "Spaghetti",
       "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
       "ingredients": [
@@ -237,7 +342,16 @@ describe("POST /recipe", function () {
   });
 
   it("Returns 403 for invalid recipe 4", async function () {
-    const response = await request(app).post("/api/recipes").send({
+    const res_login = await request(app).post("/api/login").send({
+        "username": "Matthew",
+        "password": "Mateusz"
+    });
+
+    const headers = {
+        Cookie: `security_header=${res_login._body.security_header}; path=/`
+    }
+
+    const response = await request(app).post("/api/recipes").set(headers).send({
       "name": "Spaghetti",
       "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
       "ingredients": [
