@@ -22,9 +22,9 @@ test('Is validate password working', () => {
     expect(validatePassword("12345")).eql(true);
 });
 
-describe("POST /logging", function () {
+describe("POST /login", function () {
     it("Returns 400 if username format invalid", async function () {
-        const response = await request(app).post("/api/logging").send({
+        const response = await request(app).post("/api/login").send({
             "username": "user!name",
             "password": "password1"
         });
@@ -32,7 +32,7 @@ describe("POST /logging", function () {
     });
 
     it("Returns 'Parameter username has invalid format' error message if username format invalid", async function () {
-        const response = await request(app).post("/api/logging").send({
+        const response = await request(app).post("/api/login").send({
             "username": "user!name",
             "password": "password1"
         });
@@ -40,7 +40,7 @@ describe("POST /logging", function () {
     });
 
     it("Return 401 if username not found", async function () {
-        const response= await request(app).post("/api/logging").send(
+        const response= await request(app).post("/api/login").send(
             {
                 "username": 'testUserName',
                 "password": "pass123"
@@ -50,7 +50,7 @@ describe("POST /logging", function () {
      });
 
      it("Return 'Incorrect username or password' error message if username not found", async function () {
-        const response= await request(app).post("/api/logging").send(
+        const response= await request(app).post("/api/login").send(
             {
                 "username": 'testUserName',
                 "password": "pass123"
@@ -69,7 +69,7 @@ describe("POST /logging", function () {
         test.isAdmin="0";
         test.insert(db);
 
-        const response= await request(app).post("/api/logging").send(
+        const response= await request(app).post("/api/login").send(
             {
                 "username": test.username,
                 "password": "pass123"
@@ -90,7 +90,7 @@ describe("POST /logging", function () {
         test.isAdmin="0";
         test.insert(db);
 
-        const response= await request(app).post("/api/logging").send(
+        const response= await request(app).post("/api/login").send(
             {
                 "username": test.username,
                 "password": "pass123"
