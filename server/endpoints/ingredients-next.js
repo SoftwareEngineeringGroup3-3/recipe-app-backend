@@ -18,8 +18,8 @@ const checkDataUniqueness = (req, ingredientName) => {
 class ApiIngredientObject extends ApiObject {
     async get(req){
         console.log("endpoints/ingredients/next: recieved get");
-        if(!req.user || req.user.isAdmin != 1) {
-            throw new ApiError(401, 'User is not authorized!');
+        if(!req.user) {
+            throw new ApiError(401, 'Not authorized!');
         }
 
         ////Trying to do it the following way will become overwhelmingly complex if tried on current database structure
