@@ -70,7 +70,7 @@ class ApiIngredientObject extends ApiObject {
     async put(req){
         console.log("endpoints/ingredients: recieved put");
 
-        if(!req.user && req.user.isAdmin != 1) { //we use && here because only admin is authorized (the first condition causes the second to be not checked if the user is null, avoiding a crash.)
+        if(!req.user || req.user.isAdmin != 1) {
             throw new ApiError(401, 'User is not authorized!');
         }
         if(!req.params.id)
