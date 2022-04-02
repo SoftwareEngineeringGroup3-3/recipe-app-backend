@@ -1,4 +1,4 @@
-const {Recipe, validateRecipeName, validateRecipeInstructions, 
+const { validateRecipeName, validateRecipeInstructions, 
   validateRecipeTags, validateRecipeIngredients, convertDataIngredients, convertDataTags} = require ('../server/templates/recipes.js');
 const request = require("supertest");//("http://localhost:5000");
 const app = require('../server/app.js'); //reference to server.js
@@ -370,92 +370,4 @@ describe("POST /recipe", function () {
   });
     expect(response.status).to.eql(403);
   });
-});
-
-//recpes/{id} - delete testing:
-describe("DELETE /recipes/{id}", function () {
-  it("should return 401 on delete when user not logged in", async function () {
-    const response = await request(app).delete("/api/ingredients");
-    
-    expect(response.status).to.eql(401);
-  });
-
-  it("should return 401 on delete when user not admin", async function () {
-      await request(app).post("/api/registration").send({
-          "username": "Matt",
-          "password": "matt1",
-          "repPassword": "matt1",
-          "email": "mail1@mail.pl"
-      });
-
-      const token = await request(app).post("/api/login").send({
-              "username": "Matt",
-              "password": "matt1"
-          }).then((response) => response.token);
-
-      const security_header = `security_header=${token}`;
-      const headers = {
-        cookies: `${security_header}; path=/`
-      }
-
-      const response = await request(app).delete("/api/recipes/1").set(headers);
-      
-      expect(response.status).to.eql(401);
-  });
-
-  it("should return 403 on delete ingredient without id parameter (validation exception)", async function () {
-    const res_login = await request(app).post("/api/login").send({
-        "username": "Matthew",
-        "password": "Mateusz"
-    });
-
-    const headers = {
-        Cookie: `security_header=${res_login._body.security_header}; path=/`
-    }
-
-    const response = await request(app).delete("/api/recipes/").set(headers);
-    
-    expect(response.status).to.eql(403);
-  });
-
-  it("should return 404 for wrong id",async function () {
-      const res_login = await request(app).post("/api/login").send({
-          "username": "Matthew",
-          "password": "Mateusz"
-      });
-
-      const headers = {
-          Cookie: `security_header=${res_login._body.security_header}; path=/`
-      }
-
-      const response= await request(app).delete("/api/recipes/0").set(headers).send({
-        "id": 0
-      });
-      expect(response.status).to.eql(404);
-  })
-
-  it("should return 200 for exisitng id",async function () {
-    const res_login = await request(app).post("/api/login").send({
-        "username": "Matthew",
-        "password": "Mateusz"
-    });
-
-    const headers = {
-        Cookie: `security_header=${res_login._body.security_header}; path=/`
-    }
-
-    const db = new sqlite('database.db');
-
-    var test = new Recipe();
-    test.name="DELETION_TEST_RESERVED_silica_gel";
-    test.instructions = "Integration testing knows da wae.";
-    test.tags = "OILY AF; MIGHT AS WELL BE POISON; non-vegetarion; EXTRAA calories"
-    test.ingredients = "58:11g;409:11;"
-    test.insert(db);
-
-    const response= await request(app).delete("/api/recipes/"+test.id).set(headers).send({
-      "id": test.id
-    });
-    expect(response.status).to.eql(200);
-   })
 });
