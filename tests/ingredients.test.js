@@ -138,7 +138,7 @@ describe("DELETE /ingredients", function () {
       expect(response.status).to.eql(401);
   });
 
-  it("should return 400 on delete ingredient without id parameter", async function () {
+  it("should return 403 on delete ingredient without id parameter (validation exception)", async function () {
     const res_login = await request(app).post("/api/login").send({
         "username": "Matthew",
         "password": "Mateusz"
@@ -148,9 +148,9 @@ describe("DELETE /ingredients", function () {
         Cookie: `security_header=${res_login._body.security_header}; path=/`
     }
 
-    const response = await request(app).delete("/api/ingredients").set(headers);
+    const response = await request(app).delete("/api/ingredients/").set(headers);
     
-    expect(response.status).to.eql(400);
+    expect(response.status).to.eql(403);
   });
 
   it("should return 404 for wrong id",async function () {
@@ -163,7 +163,7 @@ describe("DELETE /ingredients", function () {
           Cookie: `security_header=${res_login._body.security_header}; path=/`
       }
 
-      const response= await request(app).delete("/api/ingredients").set(headers).send({
+      const response= await request(app).delete("/api/ingredients/0").set(headers).send({
         "id": 0
       });
       expect(response.status).to.eql(404);
@@ -186,7 +186,7 @@ describe("DELETE /ingredients", function () {
     test.photo="";
     test.insert(db);
 
-    const response= await request(app).delete("/api/ingredients").set(headers).send({
+    const response= await request(app).delete("/api/ingredients/"+test.id).set(headers).send({
       "id": test.id
     });
     expect(response.status).to.eql(200);
@@ -194,7 +194,7 @@ describe("DELETE /ingredients", function () {
 });
 
 
-describe("PUT /ingredients", function () { //ID and Packet validation is done seperately after these in the unit tests, so I won't repeat any which would require that for now (unlike the ones before this in the current file)
+describe("PUT /ingredients/{id}", function () { //ID and Packet validation is done seperately after these in the unit tests, so I won't repeat any which would require that for now (unlike the ones before this in the current file)
   it("Returns 401 for user not logged in", async function () { 
     const response = await request(app).put("/api/ingredients").send({
       "id": 0,
@@ -224,7 +224,7 @@ describe("PUT /ingredients", function () { //ID and Packet validation is done se
       cookies: `${security_header}; path=/`
     }
 
-    const response = await request(app).put("/api/ingredients").set(headers).send({
+    const response = await request(app).put("/api/ingredients/{id}").set(headers).send({
       "id": 0,
       "name": "NOW_BETTER_THAN_EVER",
       "photo": ""
@@ -244,7 +244,7 @@ describe("PUT /ingredients", function () { //ID and Packet validation is done se
         Cookie: `security_header=${res_login._body.security_header}; path=/`
     }
 
-    const response = await request(app).put("/api/ingredients").set(headers).send({
+    const response = await request(app).put("/api/ingredients/0").set(headers).send({
       "id": 0,
       "name": "NOW_BETTER_THAN_EVER",
       "photo": ""
@@ -271,7 +271,7 @@ describe("PUT /ingredients", function () { //ID and Packet validation is done se
     test.photo="";
     test.insert(db);
 
-    const response= await request(app).put("/api/ingredients").set(headers).send(
+    const response= await request(app).put("/api/ingredients/"+test.id).set(headers).send(
         {"id": test.id,
         "name": "NOW_BETTER_THAN_EVER_VTWO",
         "photo":""});
