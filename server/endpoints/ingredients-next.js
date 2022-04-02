@@ -16,8 +16,8 @@ const checkDataUniqueness = (req, ingredientName) => {
 }
 
 class ApiIngredientObject extends ApiObject {
-    async post(req){
-        console.log("endpoints/ingredients/next: recieved post");
+    async get(req){
+        console.log("endpoints/ingredients/next: recieved get");
         if(!req.user || req.user.isAdmin != 1) {
             throw new ApiError(401, 'User is not authorized!');
         }
