@@ -12,8 +12,8 @@ const ingredientFetchFormat = {
 }
 
 const ingredientPutFormat = {
-    id: {required: true, type: 'number', lambda: () => { return true; }},
-    name: { required: false, type: 'string', lambda: validateName }
+    id: {required: false, type: 'number', lambda: () => { return true; }},
+    name: { required: true, type: 'string', lambda: validateName }
 };
 
 
@@ -51,11 +51,14 @@ class ApiIngredientObject extends ApiObject {
         if(!req.user || req.user.isAdmin != 1) {
             throw new ApiError(401, 'User is not authorized!');
         }
-      
+        if(!req.params.id)
+        {
+             throw new ApiError(403, 'Validation exception.');
+        }
         this.enforceContentType(req, 'application/json');
-        const data=this.parseAndValidate(req.body,ingredientFetchFormat, true);
+        // const data=this.parseAndValidate(req.body,null, true);
 
-        let ingred= new Ingredient(data.id);
+        let ingred= new Ingredient(req.params.id);
         if(!ingred.fetch(req.database)) //fetch, when succesful, populates the other fields of the ingredient apart from the id.
         {
             throw new ApiError(404, 'Ingredient not found')
@@ -70,20 +73,20 @@ class ApiIngredientObject extends ApiObject {
         if(!req.user || req.user.isAdmin != 1) {
             throw new ApiError(401, 'User is not authorized!');
         }
-
+        if(!req.params.id)
+        {
+             throw new ApiError(403, 'Validation exception.');
+        }
         this.enforceContentType(req,'application/json');
         const data=this.parseAndValidate(req.body,ingredientPutFormat, true);
 
-        let oldIngredient = new Ingredient(data.id);
+        let oldIngredient = new Ingredient(req.params.id);
         if(!oldIngredient.fetch(req.database)) //fetch returns false if id doesn't exist or true if it does.
         {
             throw new ApiError(404, 'Ingredient not found')
         }
         
-        if(data.name!=null) //These ifs check if the packet didn't cotain the given field (i.e. doesn't need to be updated)
-        {
-            oldIngredient.name=data.name;
-        }
+        oldIngredient.name=data.name;
         oldIngredient.sync(req.database);
 
         return oldIngredient.serialize();
