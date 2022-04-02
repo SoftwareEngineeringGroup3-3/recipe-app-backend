@@ -32,7 +32,8 @@ class ApiIngredientObject extends ApiObject {
         //     queryPart.push(`recipe_ingredients LIKE \'%${ingredient.id}:%\'`);
         // }
         // let recipesWithPartialIngredients=req.database.prepare(`SELECT recipe_ingredients as RI FROM recipes WHERE ${queryPart.join(' AND ')} ORDER BY LENGTH(recipe_ingredients) DESC LIMIT 3 `).all();
-
+        //If we find a workaround for the above part and ingredient isn't found, return apierror 404 Ingredient not found.
+        
         var ingredients = req.database.prepare(`SELECT * FROM ingredients ORDER BY RANDOM() LIMIT 5;`).all();
         return ingredients;
     }
