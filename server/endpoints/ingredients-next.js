@@ -15,27 +15,54 @@ const checkDataUniqueness = (req, ingredientName) => {
     return true;
 }
 
+const countIngredients = (ingredientList) =>{
+    string=ingredientList['RI'];
+    let count = 0;
+    for(let i = 0; i < string.length; i++){
+       if(string.charAt(i)===':')
+       {
+           count++;
+       }
+    };
+    return count;
+}
+
 class ApiIngredientObject extends ApiObject {
     async get(req){
         console.log("endpoints/ingredients/next: recieved get");
-        if(!req.user) {
-            throw new ApiError(401, 'Not authorized!');
-        }
+        // if(!req.user) {
+        //     throw new ApiError(401, 'User is not authorized!');
+        // }
 
         ////Trying to do it the following way will become overwhelmingly complex if tried on current database structure
         ////especially considering that some SQLite functions like LENGTH() aren't working.
-        // const queryPart=[];
-        // for(const ingredient of JSON.parse(req.body))
-        // {
-        //     this.validateFormat(ingredient,ingredientNextFormat,true)
-        //     dataArray.push(ingredient);
-        //     queryPart.push(`recipe_ingredients LIKE \'%${ingredient.id}:%\'`);
-        // }
-        // let recipesWithPartialIngredients=req.database.prepare(`SELECT recipe_ingredients as RI FROM recipes WHERE ${queryPart.join(' AND ')} ORDER BY LENGTH(recipe_ingredients) DESC LIMIT 3 `).all();
+        // const dataArray =[];
+        let givenIngredientsCount=0;
+        const queryPart=[];
+        for(const ingredient of JSON.parse(req.body))
+        {
+            this.validateFormat(ingredient,ingredientNextFormat,true)
+            // dataArray.push(ingredient);
+            queryPart.push(`recipe_ingredients LIKE \'%${ingredient.id}:%\'`);
+            givenIngredientsCount++;
+        }
+        const ingredientsListArray=[];
+        let recipesIngredientLists=req.database.prepare(`SELECT recipe_ingredients as RI FROM recipes WHERE ${queryPart.join(' AND ')} ORDER BY length(recipe_ingredients) DESC LIMIT 3 `).all(
+            // function(err,rows){
+            //     rows.forEach((row) => {
+            //         console.log(row.RI);
+            //     })
+            // }
+        );
+        console.log(recipesIngredientLists.length);
+        console.log(recipesIngredientLists[0]);
+        console.log(countIngredients(recipesIngredientLists[0]));
+        //let topRecipeIngredientCount=recipesWithPartialIngredients.//req.database.prepare('SELECT LEN(col) - LEN(REPLACE(col, 'Y', ''))')
         //If we find a workaround for the above part and ingredient isn't found, return apierror 404 Ingredient not found.
         
-        var ingredients = req.database.prepare(`SELECT * FROM ingredients ORDER BY RANDOM() LIMIT 5;`).all();
-        return ingredients;
+        // var ingredients = req.database.prepare(`SELECT * FROM ingredients ORDER BY RANDOM() LIMIT 5;`).all();
+        // return ingredients;
+        return recipesIngredientLists;
     }
 
 }
