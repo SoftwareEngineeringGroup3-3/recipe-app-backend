@@ -16,8 +16,8 @@ const checkDataUniqueness = (req, ingredientName) => {
 }
 
 const countIngredients = (ingredientList) =>{
-    string=ingredientList['RI'];
     let count = 0;
+    let string=ingredientList;
     for(let i = 0; i < string.length; i++){
        if(string.charAt(i)===':')
        {
@@ -27,6 +27,23 @@ const countIngredients = (ingredientList) =>{
     return count;
 }
 
+const findMissingIngredients = (stringIngred, givenIngredients) =>{ //or ingredientLists if I want to do nested for loops.
+    let ingredCount=countIngredients(stringIngred);
+    let string='';
+    console.log(string=stringIngred.replace(/:.*;/,';'));
+    console.log(string=string.replace(/:.*/,'')); //handles the last ingredient because that doesn't always have ';'
+
+    const missingIngreds=[];
+    let strIngredArr=string.split(';');
+    for(let i=0; i<strIngredArr.length; i++){
+        if(!givenIngredients.includes(Number(strIngredArr[i])))
+        {
+            console.log(strIngredArr[i]);
+            missingIngreds.push(strIngredArr[i]);
+        }
+    }
+    return missingIngreds;
+}
 class ApiIngredientObject extends ApiObject {
     async get(req){
         console.log("endpoints/ingredients/next: recieved get");
@@ -36,13 +53,14 @@ class ApiIngredientObject extends ApiObject {
 
         ////Trying to do it the following way will become overwhelmingly complex if tried on current database structure
         ////especially considering that some SQLite functions like LENGTH() aren't working.
-        // const dataArray =[];
+        const dataArray =[];
         let givenIngredientsCount=0;
         const queryPart=[];
         for(const ingredient of JSON.parse(req.body))
         {
             this.validateFormat(ingredient,ingredientNextFormat,true)
-            // dataArray.push(ingredient);
+            console.log(typeof ingredient.id)
+            dataArray.push(ingredient.id);
             queryPart.push(`recipe_ingredients LIKE \'%${ingredient.id}:%\'`);
             givenIngredientsCount++;
         }
@@ -56,13 +74,13 @@ class ApiIngredientObject extends ApiObject {
         );
         console.log(recipesIngredientLists.length);
         console.log(recipesIngredientLists[0]);
-        console.log(countIngredients(recipesIngredientLists[0]));
+        console.log(countIngredients(recipesIngredientLists[0]['RI']));
         //let topRecipeIngredientCount=recipesWithPartialIngredients.//req.database.prepare('SELECT LEN(col) - LEN(REPLACE(col, 'Y', ''))')
         //If we find a workaround for the above part and ingredient isn't found, return apierror 404 Ingredient not found.
         
         // var ingredients = req.database.prepare(`SELECT * FROM ingredients ORDER BY RANDOM() LIMIT 5;`).all();
         // return ingredients;
-        return recipesIngredientLists;
+        return findMissingIngredients(recipesIngredientLists[0]['RI'],dataArray);
     }
 
 }
