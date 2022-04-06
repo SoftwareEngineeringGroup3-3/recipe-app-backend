@@ -55,6 +55,10 @@ class ApiIngredientObject extends ApiObject {
             queryPart.push(`recipe_ingredients LIKE \'%${ingredient.id}:%\'`);
             givenIngredientsCount++;
         }
+        if(queryPart.length==0)
+        {
+            throw new ApiError(403, "No ingredients selected.")
+        }
 
         let recipesIngredientLists=req.database.prepare(
             `SELECT recipe_ingredients as RI FROM recipes WHERE ${queryPart.join(' AND ')}
