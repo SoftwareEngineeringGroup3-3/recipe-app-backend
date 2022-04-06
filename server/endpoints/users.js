@@ -2,9 +2,8 @@ const { ApiObject, ApiError } = require ('../apiobject.js');
 const { User, validateUsername, validatePassword,validateIsAdmin, hashPassword } = require ('../templates/user.js');
 
 const userValidationFields = {
-    username: { required: true, type: 'string', lambda: validateUsername },
-    password: { required: true, type: 'string', lambda: validatePassword },
-    isAdmin: { required: true, type: 'boolean', lambda: validateIsAdmin}
+    username: { required: false, type: 'string', lambda: validateUsername },
+    password: { required: false, type: 'string', lambda: validatePassword }
 };
 
 const checkUsernameUniqueness = (req, username) => {
@@ -17,7 +16,7 @@ class ApiUserEditObject extends ApiObject {
     async put (req) {
         console.log("endpoints/users/{id}: recieved put");
         this.enforceContentType(req, 'application/json'); 
-        if(!req.params.id || typeof req.params.id!='number')
+        if(!req.params.id || isNaN(req.params.id))
         {
              throw new ApiError(403, 'Validation exception.');
         }
@@ -31,27 +30,18 @@ class ApiUserEditObject extends ApiObject {
             throw new ApiError(404, 'User not found')
         }
 
-        if(userData.username!=newData.username) //this if is needed because of uniqueness check
+        if(newData.username && userData.username!=newData.username) //this if is needed because of uniqueness check
         {
             checkUsernameUniqueness(req,newData.username);
             userData.username=newData.username;
         }
 
-        userData.password=await hashPassword(newData.password);
-        
-        if(req.user.isAdmin)//only admin can change if others are admin.
+        if(newData.password)
         {
-            if(newData.isAdmin)
-            {
-                userData.isAdmin=1;
-            }
-            else
-            {
-                userData.isAdmin=0;
-            }
+            userData.password=await hashPassword(newData.password);
         }
-        
-        //Saved recipes and tags funcionaliyies not yet implemented or planned to be 
+                
+        //Saved recipes and tags funcionalities not yet implemented or planned to be 
         //implemented in this sprint. So, add relevant assignments here when that's done.
 
 
