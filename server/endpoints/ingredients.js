@@ -55,7 +55,7 @@ class ApiIngredientObject extends ApiObject {
         {
              throw new ApiError(403, 'Validation exception.');
         }
-        this.enforceContentType(req, 'application/json');
+        //this.enforceContentType(req, 'application/json');
         // const data=this.parseAndValidate(req.body,null, true);
 
         let ingred= new Ingredient(req.params.id);
