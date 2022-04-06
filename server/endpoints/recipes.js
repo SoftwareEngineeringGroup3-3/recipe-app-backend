@@ -22,7 +22,7 @@ class ApiRecipeObject extends ApiObject {
         this.enforceContentType(req, 'application/json');
         const data = this.parseAndValidate(req.body, recipePostFormat, true);
         // checkDataUniqueness(req,data.name);
-        var recipe = new Recipe();
+        let recipe = new Recipe();
         recipe.name = data.name;
         recipe.instructions = data.instructions;
         recipe.tags = convertDataTags(data.tags);
@@ -33,6 +33,26 @@ class ApiRecipeObject extends ApiObject {
             throw new Error('Recipe creation failed');
         }
         return data;
+    }
+
+    async delete(req) {
+        console.log("endpoints/recipe: recieved delete")
+
+        if(!req.user || req.user.isAdmin != 1) {
+            throw new ApiError(401, 'User is not authorized!');
+        }
+        if(!req.params.id)
+        {
+            throw new ApiError(403, 'Validation exception.');
+        }
+        this.enforceContentType(req, 'application/json');
+        let recipe= new Recipe(req.params.id);
+        if(!recipe.fetch(req.database)) //fetch, when succesful, populates the other fields of the ingredient apart from the id.
+        {
+            throw new ApiError(404, 'Recipe not found')
+        }
+        recipe.delete(req.database);
+        return recipe.serialize();
     }
 }
 
