@@ -33,8 +33,16 @@ class ApiIngredientObject extends ApiObject {
 
         if(req.params.id == 'all') {
             console.log('Received: ingredients/all');
-            var ingredients = req.database.prepare("SELECT ingredient_id AS id, ingredient_name AS name FROM ingredients").all();
-            return ingredients;
+            const page = req.query.page;
+            const limit = req.query.limit;
+            const ingredients = req.database.prepare("SELECT ingredient_id AS id, ingredient_name AS name FROM ingredients").all();
+            let pageIngredients = [];
+            for(let i = (page-1) * limit; i < page*limit; i++) {
+                if(ingredients[i] != null) pageIngredients.push(ingredients[i]);
+                else break;
+            }
+
+            return pageIngredients;
         }
 
         this.enforceContentType(req, 'application/json');
