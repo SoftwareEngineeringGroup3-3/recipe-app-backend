@@ -5,6 +5,7 @@
     "main": "index.js",
     "scripts": {
         "setupProject": "node setupDatabase.js",
+        "dev": "nodemon server/server.js",
         "startServer": "node server/server.js",
         "test": "jest"
     },
@@ -27,7 +28,9 @@
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
         "express.js": "^1.0.0",
+        "js-sha256": "^0.9.0",
         "mocha": "^9.2.2",
+        "nodemon": "^2.0.15",
         "supertest": "^6.2.2"
     },
     "devDependencies": {

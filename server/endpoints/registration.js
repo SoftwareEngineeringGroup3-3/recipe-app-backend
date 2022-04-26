@@ -4,7 +4,7 @@ const { verifyToken, createToken } = require ('../templates/token.js');
 
 const registrationValidation = {
     username: { required: true, type: 'string', lambda: validateUsername },
-    password: { required: true, type: 'string', lambda: validatePassword },
+    password: { required: true, type: 'string', lambda: () => { return true; } },
     email: {required: true, type: 'string', lambda: validateEmail}
 };
 
@@ -31,7 +31,7 @@ class ApiRegistrationObject extends ApiObject {
         checkDataUniqueness(req,data.username,data.email);
         var usrNew= new User(null,true);
         usrNew.username=data.username;
-        usrNew.password=await hashPassword(data.password);
+        usrNew.password=data.password;
         usrNew.email=data.email;
         usrNew.created=Date.now();
         usrNew.isAdmin="0";

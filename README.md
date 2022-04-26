@@ -16,6 +16,7 @@
 ## Project setup
 #### To install dependencies: `npm install`
 #### To setup database: `npm run setupProject`
+#### To start server in DEV mode: `npm run dev`
 #### To start server: `npm run startServer`
 
 At the database setup there is admin account created.\
@@ -24,8 +25,7 @@ Default values:\
 `username: Matthew`\
 `password: Mateusz`\
 \
-Password is hashed with bcrypt, using 10 rounds.\
-You can hash any string using this page: `https://bcrypt-generator.com/`\
+Password is hashed with sha256.\
 \
 To check if everything works:\
 -open Postman\
