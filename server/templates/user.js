@@ -24,8 +24,10 @@ async function hashPassword(password) {
     return await bcrypt.hash(password, saltRounds);
 }
 
-async function comparePassword(password, hash) {
-    return await bcrypt.compare(password, hash);
+function comparePassword(password, databasePassword) {
+    console.log(password);
+    console.log(databasePassword);
+    return password == databasePassword;
 }
 
 function validateUsername (username) {

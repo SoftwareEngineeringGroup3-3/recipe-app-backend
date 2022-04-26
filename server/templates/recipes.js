@@ -1,4 +1,3 @@
-const bcrypt = require('bcrypt');
 const { DatabaseObject } = require('../databaseObject');
 const { Ingredient } = require ('../templates/ingredients.js');
 const sqlite = require('better-sqlite3');
