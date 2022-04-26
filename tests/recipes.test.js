@@ -5,6 +5,7 @@ const app = require('../server/app.js'); //reference to server.js
 const sqlite = require('better-sqlite3');
 const expect = require("chai").expect;
 const { Ingredient } = require ('../server/templates/ingredients.js');
+const { sha256 } = require('js-sha256');
 
 
 test('Empty word is invalid name', () => {
@@ -145,7 +146,7 @@ describe("POST /recipe", function () {
     let ingredient = new Ingredient();
     ingredient.name = "Tomato";
     ingredient.insert(db);
-    const response = await request(app).post("/api/recipes").send({
+    const response = await request(app).post("/recipes").send({
       "name": "Spaghetti",
       "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
       "ingredients": [
@@ -167,16 +168,16 @@ describe("POST /recipe", function () {
   });
 
   it("Returns 401 for user not admin", async function () {
-    await request(app).post("/api/registration").send({
+    await request(app).post("/registration").send({
         "username": "Matt",
-        "password": "matt1",
-        "repPassword": "matt1",
+        "password": sha256("matt1"),
+        "repPassword": sha256("matt1"),
         "email": "mail1@mail.pl"
     });
 
-    const token = await request(app).post("/api/login").send({
+    const token = await request(app).post("/login").send({
             "username": "Matt",
-            "password": "matt1"
+            "password": sha256("matt1")
         }).then((response) => response.token);
 
     const security_header = `security_header=${token}`;
@@ -188,7 +189,7 @@ describe("POST /recipe", function () {
     let ingredient = new Ingredient();
     ingredient.name = "Tomato";
     ingredient.insert(db);
-    const response = await request(app).post("/api/recipes").set(headers).send({
+    const response = await request(app).post("/recipes").set(headers).send({
       "name": "Spaghetti",
       "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
       "ingredients": [
@@ -210,9 +211,9 @@ describe("POST /recipe", function () {
   });
 
   it("Returns 200 for valid recipe", async function () {
-    const res_login = await request(app).post("/api/login").send({
+    const res_login = await request(app).post("/login").send({
         "username": "Matthew",
-        "password": "Mateusz"
+        "password": sha256("Mateusz")
     });
 
     const headers = {
@@ -223,7 +224,7 @@ describe("POST /recipe", function () {
     let ingredient = new Ingredient();
     ingredient.name = "Tomato";
     ingredient.insert(db);
-    const response = await request(app).post("/api/recipes").set(headers).send({
+    const response = await request(app).post("/recipes").set(headers).send({
       "name": "Spaghetti",
       "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
       "ingredients": [
@@ -245,9 +246,9 @@ describe("POST /recipe", function () {
   });
 
   it("Returns 403 for invalid recipe 1", async function () {
-    const res_login = await request(app).post("/api/login").send({
+    const res_login = await request(app).post("/login").send({
         "username": "Matthew",
-        "password": "Mateusz"
+        "password": sha256("Mateusz")
     });
 
     const headers = {
@@ -258,7 +259,7 @@ describe("POST /recipe", function () {
     let ingredient = new Ingredient();
     ingredient.name = "Tomato";
     ingredient.insert(db);
-    const response = await request(app).post("/api/recipes").set(headers).send({
+    const response = await request(app).post("/recipes").set(headers).send({
       "name": "",
       "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
       "ingredients": [
@@ -280,9 +281,9 @@ describe("POST /recipe", function () {
   });
 
   it("Returns 403 for invalid recipe 2", async function () {
-    const res_login = await request(app).post("/api/login").send({
+    const res_login = await request(app).post("/login").send({
         "username": "Matthew",
-        "password": "Mateusz"
+        "password": sha256("Mateusz")
     });
 
     const headers = {
@@ -293,7 +294,7 @@ describe("POST /recipe", function () {
     let ingredient = new Ingredient();
     ingredient.name = "Tomato";
     ingredient.insert(db);
-    const response = await request(app).post("/api/recipes").set(headers).send({
+    const response = await request(app).post("/recipes").set(headers).send({
       "name": "Spaghetti",
       "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
       "ingredients": [],
@@ -307,9 +308,9 @@ describe("POST /recipe", function () {
   });
 
   it("Returns 403 for invalid recipe 3", async function () {
-    const res_login = await request(app).post("/api/login").send({
+    const res_login = await request(app).post("/login").send({
         "username": "Matthew",
-        "password": "Mateusz"
+        "password": sha256("Mateusz")
     });
 
     const headers = {
@@ -320,7 +321,7 @@ describe("POST /recipe", function () {
     let ingredient = new Ingredient();
     ingredient.name = "Tomato";
     ingredient.insert(db);
-    const response = await request(app).post("/api/recipes").set(headers).send({
+    const response = await request(app).post("/recipes").set(headers).send({
       "name": "Spaghetti",
       "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
       "ingredients": [
@@ -342,16 +343,16 @@ describe("POST /recipe", function () {
   });
 
   it("Returns 403 for invalid recipe 4", async function () {
-    const res_login = await request(app).post("/api/login").send({
+    const res_login = await request(app).post("/login").send({
         "username": "Matthew",
-        "password": "Mateusz"
+        "password": sha256("Mateusz")
     });
 
     const headers = {
         Cookie: `security_header=${res_login._body.security_header}; path=/`
     }
 
-    const response = await request(app).post("/api/recipes").set(headers).send({
+    const response = await request(app).post("/recipes").set(headers).send({
       "name": "Spaghetti",
       "instructions": "1. Boil water.\n2. Throw pasta into the boiling water.\n3.Add tomatoes.",
       "ingredients": [
@@ -375,22 +376,22 @@ describe("POST /recipe", function () {
 //recpes/{id} - delete testing:
 describe("DELETE /recipes/{id}", function () {
   it("should return 401 on delete when user not logged in", async function () {
-    const response = await request(app).delete("/api/ingredients");
+    const response = await request(app).delete("/ingredients");
     
     expect(response.status).to.eql(401);
   });
 
   it("should return 401 on delete when user not admin", async function () {
-      await request(app).post("/api/registration").send({
+      await request(app).post("/registration").send({
           "username": "Matt",
-          "password": "matt1",
-          "repPassword": "matt1",
+          "password": sha256("matt1"),
+          "repPassword": sha256("matt1"),
           "email": "mail1@mail.pl"
       });
 
-      const token = await request(app).post("/api/login").send({
+      const token = await request(app).post("/login").send({
               "username": "Matt",
-              "password": "matt1"
+              "password": sha256("matt1")
           }).then((response) => response.token);
 
       const security_header = `security_header=${token}`;
@@ -398,46 +399,46 @@ describe("DELETE /recipes/{id}", function () {
         cookies: `${security_header}; path=/`
       }
 
-      const response = await request(app).delete("/api/recipes/1").set(headers);
+      const response = await request(app).delete("/recipes/1").set(headers);
       
       expect(response.status).to.eql(401);
   });
 
   it("should return 403 on delete ingredient without id parameter (validation exception)", async function () {
-    const res_login = await request(app).post("/api/login").send({
+    const res_login = await request(app).post("/login").send({
         "username": "Matthew",
-        "password": "Mateusz"
+        "password": sha256("Mateusz")
     });
 
     const headers = {
         Cookie: `security_header=${res_login._body.security_header}; path=/`
     }
 
-    const response = await request(app).delete("/api/recipes/").set(headers);
+    const response = await request(app).delete("/recipes/").set(headers);
     
     expect(response.status).to.eql(403);
   });
 
   it("should return 404 for wrong id",async function () {
-      const res_login = await request(app).post("/api/login").send({
+      const res_login = await request(app).post("/login").send({
           "username": "Matthew",
-          "password": "Mateusz"
+          "password": sha256("Mateusz")
       });
 
       const headers = {
           Cookie: `security_header=${res_login._body.security_header}; path=/`
       }
 
-      const response= await request(app).delete("/api/recipes/0").set(headers).send({
+      const response= await request(app).delete("/recipes/0").set(headers).send({
         "id": 0
       });
       expect(response.status).to.eql(404);
   })
 
   it("should return 200 for exisitng id",async function () {
-    const res_login = await request(app).post("/api/login").send({
+    const res_login = await request(app).post("/login").send({
         "username": "Matthew",
-        "password": "Mateusz"
+        "password": sha256("Mateusz")
     });
 
     const headers = {
@@ -453,7 +454,7 @@ describe("DELETE /recipes/{id}", function () {
     test.ingredients = "58:11g;409:11;"
     test.insert(db);
 
-    const response= await request(app).delete("/api/recipes/"+test.id).set(headers).send({
+    const response= await request(app).delete("/recipes/"+test.id).set(headers).send({
       "id": test.id
     });
     expect(response.status).to.eql(200);
