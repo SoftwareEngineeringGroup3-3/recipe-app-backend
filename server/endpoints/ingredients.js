@@ -31,6 +31,20 @@ class ApiIngredientObject extends ApiObject {
             throw new ApiError(401, 'User is not authorized!');
         }
 
+        if(req.params.id == 'all') {
+            console.log('Received: ingredients/all');
+            const page = req.query.page;
+            const limit = req.query.limit;
+            const ingredients = req.database.prepare("SELECT ingredient_id AS id, ingredient_name AS name FROM ingredients").all();
+            let pageIngredients = [];
+            for(let i = (page-1) * limit; i < page*limit; i++) {
+                if(ingredients[i] != null) pageIngredients.push(ingredients[i]);
+                else break;
+            }
+
+            return pageIngredients;
+        }
+
         this.enforceContentType(req, 'application/json');
         const data = this.parseAndValidate(req.body, ingredientPostFormat, true);
         checkDataUniqueness(req,data.name);
@@ -91,18 +105,6 @@ class ApiIngredientObject extends ApiObject {
 
         return oldIngredient.serialize();
     }
-
-    async get(req){
-        console.log("endpoints/ingredients: recieved get");
-
-        if(!req.user || req.user.isAdmin != 1) {
-            throw new ApiError(401, 'User is not authorized!');
-        }
-
-        var ingredients = req.database.prepare("SELECT ingredient_id AS id, ingredient_name AS name FROM ingredients").all();
-        return ingredients;
-    }
-
 }
 
 module.exports = ApiIngredientObject;

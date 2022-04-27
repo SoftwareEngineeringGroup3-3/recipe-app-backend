@@ -45,7 +45,7 @@ class ApiRecipeObject extends ApiObject {
         {
             throw new ApiError(403, 'Validation exception.');
         }
-        this.enforceContentType(req, 'application/json');
+        //this.enforceContentType(req, 'application/json');
         let recipe= new Recipe(req.params.id);
         if(!recipe.fetch(req.database)) //fetch, when succesful, populates the other fields of the ingredient apart from the id.
         {

@@ -4,7 +4,7 @@ const { verifyToken, createToken } = require ('../templates/token.js');
 
 const loginValidation = {
     username: { required: true, type: 'string', lambda: validateUsername },
-    password: { required: true, type: 'string', lambda: validatePassword }
+    password: { required: true, type: 'string', lambda: () => { return true; } }
 };
 
 const getAuthorizationToken = async (req, username, password) => {
@@ -14,7 +14,7 @@ const getAuthorizationToken = async (req, username, password) => {
     if(users.length > 1) throw new Error('Database error: more than one user with the same username'); //we assume user_name is unique
 
     const user = users[0];
-    if(!(await comparePassword(password, user.user_password))) throw new ApiError(401, 'Incorrect username or password');
+    if(!comparePassword(password, user.user_password)) throw new ApiError(401, 'Incorrect username or password');
 
     const token = await createToken(req.database, user.user_id, req.socket.remoteAddress);
 
