@@ -20,9 +20,9 @@ class ApiUserEditObject extends ApiObject {
         {
              throw new ApiError(403, 'Validation exception.');
         }
-        if(!req.user || (req.user.id != req.params.id && !req.user.isAdmin)) {
-            throw new ApiError(401, 'Not authorized.'); //can only edit your own profile.
-        }
+        // if(!req.user || (req.user.id != req.params.id && !req.user.isAdmin)) {
+        //     throw new ApiError(401, 'Not authorized.'); //can only edit your own profile.
+        // }
         const newData = this.parseAndValidate(req.body, userValidationFields, true);
         let userData= new User(req.params.id);
         if(!userData.fetch(req.database)) //fetch returns false if id doesn't exist or true if it does.

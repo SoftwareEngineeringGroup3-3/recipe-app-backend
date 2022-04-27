@@ -15,9 +15,9 @@ class ApiRecipeObject extends ApiObject {
     async post(req) {
         console.log("endpoints/recipe: recieved post")
 
-        if(!req.user || req.user.isAdmin != 1) {
-            throw new ApiError(401, 'User is not authorized!');
-        }
+        // if(!req.user || req.user.isAdmin != 1) {
+        //     throw new ApiError(401, 'User is not authorized!');
+        // }
 
         this.enforceContentType(req, 'application/json');
         const data = this.parseAndValidate(req.body, recipePostFormat, true);
@@ -38,9 +38,9 @@ class ApiRecipeObject extends ApiObject {
     async delete(req) {
         console.log("endpoints/recipe: recieved delete")
 
-        if(!req.user || req.user.isAdmin != 1) {
-            throw new ApiError(401, 'User is not authorized!');
-        }
+        // if(!req.user || req.user.isAdmin != 1) {
+        //     throw new ApiError(401, 'User is not authorized!');
+        // }
         if(!req.params.id)
         {
             throw new ApiError(403, 'Validation exception.');

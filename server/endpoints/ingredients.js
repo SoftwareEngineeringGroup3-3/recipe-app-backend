@@ -27,9 +27,9 @@ class ApiIngredientObject extends ApiObject {
     async post (req) {
         console.log("endpoints/ingredients: recieved post")
 
-        if(!req.user || req.user.isAdmin != 1) {
-            throw new ApiError(401, 'User is not authorized!');
-        }
+        // if(!req.user || req.user.isAdmin != 1) {
+        //     throw new ApiError(401, 'User is not authorized!');
+        // }
 
         if(req.params.id == 'all') {
             console.log('Received: ingredients/all');
@@ -62,9 +62,9 @@ class ApiIngredientObject extends ApiObject {
     async delete(req){
         console.log("endpoints/ingredients: recieved delete")
 
-        if(!req.user || req.user.isAdmin != 1) {
-            throw new ApiError(401, 'User is not authorized!');
-        }
+        // if(!req.user || req.user.isAdmin != 1) {
+        //     throw new ApiError(401, 'User is not authorized!');
+        // }
         if(!req.params.id)
         {
              throw new ApiError(403, 'Validation exception.');
@@ -84,9 +84,9 @@ class ApiIngredientObject extends ApiObject {
     async put(req){
         console.log("endpoints/ingredients: recieved put");
 
-        if(!req.user || req.user.isAdmin != 1) {
-            throw new ApiError(401, 'User is not authorized!');
-        }
+        // if(!req.user || req.user.isAdmin != 1) {
+        //     throw new ApiError(401, 'User is not authorized!');
+        // }
         if(!req.params.id)
         {
              throw new ApiError(403, 'Validation exception.');
