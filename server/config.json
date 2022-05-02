@@ -4,16 +4,17 @@
     },
     "cors_origins": [
         "http://localhost:3000",
-        "http://localhost:5000"
+        "http://localhost:5000",
+        "http://localhost:80"
     ],
     "api_objects": {
-        "/api/login": "./endpoints/login.js", 
-        "/api/registration": "./endpoints/registration.js",
-        "/api/ingredients": "./endpoints/ingredients.js",
-        "/api/ingredients/next": "./endpoints/ingredients-next.js",
-        "/api/ingredients/:id": "./endpoints/ingredients.js",
-        "/api/recipes" : "./endpoints/recipes.js",
-        "/api/recipes/:id" : "./endpoints/recipes.js",
-        "/api/users/:id": "./endpoints/users.js"
+        "/login": "./endpoints/login.js", 
+        "/registration": "./endpoints/registration.js",
+        "/ingredients": "./endpoints/ingredients.js",
+        "/ingredients/next": "./endpoints/ingredients-next.js",
+        "/ingredients/:id": "./endpoints/ingredients.js",
+        "/recipes" : "./endpoints/recipes.js",
+        "/recipes/:id" : "./endpoints/recipes.js",
+        "/users/:id": "./endpoints/users.js"
     }
 }

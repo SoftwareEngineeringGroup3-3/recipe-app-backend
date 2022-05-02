@@ -78,7 +78,7 @@ db.prepare(`INSERT INTO users (
     ) VALUES (
         1,
         'Matthew',
-        '$2a$10$/AU4.8cKSHeEZEdttiQ9v./XVDRwzkmo/V6k7ahqUdu1UUuhztyOq',
+        '853cc41b94c44da86fa500aa2cbe04890ea7e993c39e65a32ec49a1175477a0c',
         'matt@matt.com',
         ${Date.now()}
     )`).run();
