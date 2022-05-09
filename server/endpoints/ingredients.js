@@ -106,6 +106,7 @@ class ApiIngredientObject extends ApiObject {
         }
         
         oldIngredient.name=data.name;
+        checkIfNotEmpty(req,data.name);
         oldIngredient.sync(req.database);
 
         return oldIngredient.serialize();
