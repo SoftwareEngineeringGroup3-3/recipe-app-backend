@@ -23,6 +23,10 @@ const checkDataUniqueness = (req, ingredientName) => {
     return true;
 }
 
+const checkIfNotEmpty = (req, ingredientName) => {
+    if(ingredientName.length < 1) throw new ApiError(403, 'Parameters error: ingredient can not be empty.')
+}
+
 class ApiIngredientObject extends ApiObject {
     async post (req) {
         console.log("endpoints/ingredients: recieved post")
@@ -47,6 +51,7 @@ class ApiIngredientObject extends ApiObject {
 
         this.enforceContentType(req, 'application/json');
         const data = this.parseAndValidate(req.body, ingredientPostFormat, true);
+        checkIfNotEmpty(req,data.name);
         checkDataUniqueness(req,data.name);
         let ingredient = new Ingredient();
         ingredient.name=data.name;
@@ -101,6 +106,7 @@ class ApiIngredientObject extends ApiObject {
         }
         
         oldIngredient.name=data.name;
+        checkIfNotEmpty(req,data.name);
         oldIngredient.sync(req.database);
 
         return oldIngredient.serialize();
