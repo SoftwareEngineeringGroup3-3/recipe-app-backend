@@ -1,4 +1,3 @@
-const { data } = require('cheerio/lib/api/attributes');
 const { ApiObject, ApiError } = require ('../apiobject.js');
 const { Ingredient, validateName, ingredientFormat } = require ('../templates/ingredients.js');
 const { User } = require('../templates/user.js');
