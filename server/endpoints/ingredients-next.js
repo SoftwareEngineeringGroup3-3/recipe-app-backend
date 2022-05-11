@@ -1,9 +1,8 @@
 const { ApiObject, ApiError } = require ('../apiobject.js');
 const { Ingredient, validateName, ingredientFormat } = require ('../templates/ingredients.js');
 const { User } = require('../templates/user.js');
-const Math = require('mathjs');
 
-const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+// const clamp = (num, min, max) => (num>min?num:min)<max?num:max;
 
 const ingredientNextFormat = {
     id: {required: true, type: 'number', lambda: () => { return true; }},
@@ -43,9 +42,9 @@ const findMissingIngredients = (stringIngred, givenIngredients) =>{ //or ingredi
 class ApiIngredientObject extends ApiObject {
     async get(req){
         console.log("endpoints/ingredients/next: recieved get");
-        if(!req.user) {
-            throw new ApiError(401, 'User is not authorized!');
-        }
+        // if(!req.user) {
+        //     throw new ApiError(401, 'User is not authorized!');
+        // }
 
         const givenIngredients =[];
         const page = req.query.page??1;
@@ -95,7 +94,12 @@ class ApiIngredientObject extends ApiObject {
             missingIngredients=missingIngredients.concat(findMissingIngredients(recipesIngredientLists[i]['RI'],givenIngredients));
         }
         const total_ingredients = missingIngredients.length
-        const beginIndex= clamp((page-1)*limit,0,total_ingredients-1 + 99); //was -limit //+99 to let it be out of bounds so we can return empty array upon an invalid page limit combination
+        let beginIndex =(page-1)*limit;
+        const min=0; const max=total_ingredients-1 + 99;
+        beginIndex=beginIndex>min?beginIndex:min;
+        beginIndex=beginIndex<max?beginIndex:max;
+        // const beginIndex= clamp((page-1)*limit,0,total_ingredients-1 + 99); //was -limit //+99 to let it be out of bounds so we can return empty array upon an invalid page limit combination
+        console.log(beginIndex);
         // const endIndex= clamp(page*limit,beginIndex, total_ingredients-1);
         // if(beginIndex>=endIndex)
         // {
