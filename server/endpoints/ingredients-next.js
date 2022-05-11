@@ -42,9 +42,9 @@ const findMissingIngredients = (stringIngred, givenIngredients) =>{ //or ingredi
 class ApiIngredientObject extends ApiObject {
     async get(req){
         console.log("endpoints/ingredients/next: recieved get");
-        // if(!req.user) {
-        //     throw new ApiError(401, 'User is not authorized!');
-        // }
+        if(!req.user) {
+            throw new ApiError(401, 'User is not authorized!');
+        }
 
         const givenIngredients =[];
         const page = req.query.page??1;
