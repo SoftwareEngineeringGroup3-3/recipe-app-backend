@@ -99,7 +99,6 @@ class ApiIngredientObject extends ApiObject {
         beginIndex=beginIndex>min?beginIndex:min;
         beginIndex=beginIndex<max?beginIndex:max;
         // const beginIndex= clamp((page-1)*limit,0,total_ingredients-1 + 99); //was -limit //+99 to let it be out of bounds so we can return empty array upon an invalid page limit combination
-        console.log(beginIndex);
         // const endIndex= clamp(page*limit,beginIndex, total_ingredients-1);
         // if(beginIndex>=endIndex)
         // {
