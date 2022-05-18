@@ -40,13 +40,14 @@ class ApiIngredientObject extends ApiObject {
             const page = req.query.page;
             const limit = req.query.limit;
             const ingredients = req.database.prepare("SELECT ingredient_id AS id, ingredient_name AS name FROM ingredients").all();
+            let resBody = { total_ingredients: ingredients.length, ingredients: []};
             let pageIngredients = [];
             for(let i = (page-1) * limit; i < page*limit; i++) {
                 if(ingredients[i] != null) pageIngredients.push(ingredients[i]);
                 else break;
             }
-
-            return pageIngredients;
+            resBody.ingredients = pageIngredients;
+            return resBody;
         }
 
         this.enforceContentType(req, 'application/json');

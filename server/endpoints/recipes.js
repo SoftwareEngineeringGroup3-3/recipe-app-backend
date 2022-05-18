@@ -31,7 +31,7 @@ const allRecipes = async (req) => {
         else break;
     }
 
-    let resBody = { total_recipes: pageRecipes.length, recipes: []};
+    let resBody = { total_recipes: recipes.length, recipes: []};
 
     pageRecipes.forEach((el) => {
         const ingrs = el.recipe_ingredients?.split(';');
@@ -42,16 +42,12 @@ const allRecipes = async (req) => {
         recipe.instructions = el.recipe_instructions;
         recipe.tags = el.recipe_tags;
         for(const ingr of ingrs) {
-            console.log(ingr);
             const ingrString = ingr.split(':');
-            console.log(ingrString);
             let ing = new Ingredient(parseInt(ingrString[0]));
-            console.log(ing.fetch(db));
             if(!ing.fetch(db)) return new ApiError(403, 'Ingredient not found');
             delete ing.synchronized;
             delete ing.tableName;
             delete ing.__props;
-            console.log(ing);
             ingredients.push({ingredient: ing, quantity: ingrString[1]});
         }
         recipe.ingredients = ingredients;
