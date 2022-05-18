@@ -11,6 +11,7 @@
         "/login": "./endpoints/login.js", 
         "/registration": "./endpoints/registration.js",
         "/ingredients": "./endpoints/ingredients.js",
+        "/ingredients/next": "./endpoints/ingredients-next.js",
         "/ingredients/:id": "./endpoints/ingredients.js",
         "/recipes" : "./endpoints/recipes.js",
         "/recipes/filter":"./endpoints/recipes-filter.js",
