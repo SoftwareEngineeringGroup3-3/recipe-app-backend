@@ -13,6 +13,7 @@
         "/ingredients": "./endpoints/ingredients.js",
         "/ingredients/:id": "./endpoints/ingredients.js",
         "/recipes" : "./endpoints/recipes.js",
+        "/recipes/filter":"./endpoints/recipes-filter.js",
         "/recipes/:id" : "./endpoints/recipes.js",
         "/users/:id": "./endpoints/users.js"
     }
