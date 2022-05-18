@@ -10,7 +10,7 @@ class Ingredient extends DatabaseObject {
 }
 
 function validateName(name) {
-    return (!name.match(/[&._-]|\d/gi));
+    return (!name.match(/[&._-@#^*!?\(\)\[\]]|\d/gi));
 }
 
 const ingredientFormat = {
