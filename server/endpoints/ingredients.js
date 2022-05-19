@@ -27,6 +27,21 @@ const checkIfNotEmpty = (req, ingredientName) => {
     if(ingredientName.length < 1) throw new ApiError(403, 'Parameters error: ingredient can not be empty.')
 }
 
+const queryIngredients = (req) => {
+    console.log('Received: ingredients/all name');
+    const page = req.query.page;
+    const limit = req.query.limit;
+    const ingredients = req.database.prepare(`SELECT ingredient_id AS id, ingredient_name AS name FROM ingredients WHERE ingredient_name LIKE '${req.query.name}%'`).all();
+    let resBody = { total_ingredients: ingredients.length, ingredients: []};
+    let pageIngredients = [];
+    for(let i = (page-1) * limit; i < page*limit; i++) {
+        if(ingredients[i] != null) pageIngredients.push(ingredients[i]);
+        else break;
+    }
+    resBody.ingredients = pageIngredients;
+    return resBody;
+}
+
 class ApiIngredientObject extends ApiObject {
     async post (req) {
         console.log("endpoints/ingredients: recieved post")
@@ -36,6 +51,9 @@ class ApiIngredientObject extends ApiObject {
         }
 
         if(req.params.id == 'all') {
+            if(req.query.name) {
+                return queryIngredients(req);
+            }
             console.log('Received: ingredients/all');
             const page = req.query.page;
             const limit = req.query.limit;
