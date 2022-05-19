@@ -57,6 +57,44 @@ const allRecipes = async (req) => {
     return resBody;
 }
 
+const queryRecipes = async (req) => {
+    const db = req.database;
+    const page = req.query.page;
+    const limit = req.query.limit;
+
+    let recipes = db.prepare(`SELECT * FROM recipes WHERE recipe_name LIKE '${req.query.name}%'`).all();
+    let pageRecipes = [];
+    for(let i = (page-1) * limit; i < page*limit; i++) {
+        if(recipes[i] != null) pageRecipes.push(recipes[i]);
+        else break;
+    }
+
+    let resBody = { total_recipes: recipes.length, recipes: []};
+
+    pageRecipes.forEach((el) => {
+        const ingrs = el.recipe_ingredients?.split(';');
+        const ingredients = [];
+        let recipe = {};
+        recipe.id = el.recipe_id;
+        recipe.name = el.recipe_name;
+        recipe.instructions = el.recipe_instructions;
+        recipe.tags = el.recipe_tags;
+        for(const ingr of ingrs) {
+            const ingrString = ingr.split(':');
+            let ing = new Ingredient(parseInt(ingrString[0]));
+            if(!ing.fetch(db)) return new ApiError(403, 'Ingredient not found');
+            delete ing.synchronized;
+            delete ing.tableName;
+            delete ing.__props;
+            ingredients.push({ingredient: ing, quantity: ingrString[1]});
+        }
+        recipe.ingredients = ingredients;
+
+        resBody.recipes.push(recipe);
+    });
+    return resBody;
+}
+
 
 class ApiRecipeObject extends ApiObject {
 
@@ -70,7 +108,11 @@ class ApiRecipeObject extends ApiObject {
 
         if(req.params.id == 'all') {
             console.log('Received: recipes/all');
-            return allRecipes(req);
+            if(req.query.name) {
+                return queryRecipes(req);
+            } else {
+                return allRecipes(req);
+            }
         }
 
         this.enforceContentType(req, 'application/json');
