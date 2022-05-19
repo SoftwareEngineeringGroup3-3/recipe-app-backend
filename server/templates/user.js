@@ -10,6 +10,7 @@ class User extends DatabaseObject {
         this.bindProperty('isAdmin', 'user_is_admin');
         this.bindProperty('username', 'user_name');
         this.bindProperty('email', 'user_email');
+        this.bindProperty('savedRecipes', 'user_savedRecipes');
         this.bindProperty('created', 'user_creation');
         this.bindProperty('lastLogin', 'user_last_login');
         this.bindProperty('lastLoginAddr', 'user_last_ip');
@@ -28,6 +29,19 @@ function comparePassword(password, databasePassword) {
     console.log(password);
     console.log(databasePassword);
     return password == databasePassword;
+}
+
+function prepareSavedRecipes(recipes) {
+    return recipes.join(';');
+}
+
+function prepareRecipesToRequest(saved) {
+    const recipes = [];
+    let savedRecipes = saved.split(';');
+    for(const savedRecipe of savedRecipes) {
+        recipes.push(parseInt(savedRecipe));
+    }
+    return recipes;
 }
 
 function validateUsername (username) {
@@ -54,4 +68,4 @@ const userFormat = {
     user_is_admin: {required: true, type: 'number', lambda: validateIsAdmin}
 };
 
-module.exports = { User, hashPassword, comparePassword, validateUsername, validatePassword, validateEmail, validateIsAdmin, userFormat };
+module.exports = { User, prepareRecipesToRequest, prepareSavedRecipes, hashPassword, comparePassword, validateUsername, validatePassword, validateEmail, validateIsAdmin, userFormat };

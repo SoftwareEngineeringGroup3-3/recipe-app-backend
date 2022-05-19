@@ -2,8 +2,10 @@ const { ApiObject, ApiError } = require ('../apiobject.js');
 const { User, validateUsername, validatePassword,validateIsAdmin, hashPassword } = require ('../templates/user.js');
 
 const userValidationFields = {
+    id: { required: true, type: 'number', lambda: () => { return true; } },
     username: { required: false, type: 'string', lambda: validateUsername },
-    password: { required: false, type: 'string', lambda: validatePassword }
+    password: { required: false, type: 'string', lambda: validatePassword },
+    savedRecipes: { required: false, type: 'array', lambda: () => { return true; } }
 };
 
 const checkUsernameUniqueness = (req, username) => {
@@ -12,7 +14,24 @@ const checkUsernameUniqueness = (req, username) => {
     return true;
 }
 
-class ApiUserEditObject extends ApiObject {
+class ApiUserObject extends ApiObject {
+
+    async delete (req) {
+        if(!req.user.isAdmin) {
+            throw new ApiError(401, 'User is not authorized!');
+        }
+        if(!req.user.id) {
+            throw new ApiError(400, 'ID is not defined');
+        }
+        let userData= new User(req.params.id);
+        if(!userData.fetch(req.database)) //fetch returns false if id doesn't exist or true if it does.
+        {
+            throw new ApiError(404, 'User not found')
+        }
+        userData.delete(req.database);
+        return userData.serialize();
+    }
+
     async put (req) {
         console.log("endpoints/users/{id}: recieved put");
         this.enforceContentType(req, 'application/json'); 
@@ -40,6 +59,11 @@ class ApiUserEditObject extends ApiObject {
         {
             userData.password=await hashPassword(newData.password);
         }
+
+        if(newData.savedRecipes)
+        {
+            userData.savedRecipes = newData.savedRecipes;
+        }
                 
         //Saved recipes and tags funcionalities not yet implemented or planned to be 
         //implemented in this sprint. So, add relevant assignments here when that's done.
@@ -50,4 +74,4 @@ class ApiUserEditObject extends ApiObject {
     }
 }
 
-module.exports = ApiUserEditObject;
+module.exports = ApiUserObject;
