@@ -163,8 +163,8 @@ describe("POST /recipe", function () {
           "low calorie"
       ]
     });
-    expect(response.status).to.eql(401);
     ingredient.delete(db);
+    expect(response.status).to.eql(401);
   });
 
   it("Returns 401 for user not admin", async function () {
@@ -206,8 +206,8 @@ describe("POST /recipe", function () {
           "low calorie"
       ]
     });
-    expect(response.status).to.eql(401);
     ingredient.delete(db);
+    expect(response.status).to.eql(401);
   });
 
   it("Returns 200 for valid recipe", async function () {
@@ -241,8 +241,8 @@ describe("POST /recipe", function () {
           "low calorie"
       ]
     });
-    expect(response.status).to.eql(200);
     ingredient.delete(db);
+    expect(response.status).to.eql(200);
   });
 
   it("Returns 403 for invalid recipe 1", async function () {
@@ -275,9 +275,9 @@ describe("POST /recipe", function () {
           "vegetarian",
           "low calorie"
       ]
-  });
-    expect(response.status).to.eql(403);
+    });
     ingredient.delete(db);
+    expect(response.status).to.eql(403);
   });
 
   it("Returns 403 for invalid recipe 2", async function () {
@@ -302,9 +302,9 @@ describe("POST /recipe", function () {
           "vegetarian",
           "low calorie"
       ]
-  });
-    expect(response.status).to.eql(403);
+    });
     ingredient.delete(db);
+    expect(response.status).to.eql(403);
   });
 
   it("Returns 403 for invalid recipe 3", async function () {
@@ -337,9 +337,9 @@ describe("POST /recipe", function () {
           "sweet",
           "low calorie"
       ]
-  });
-    expect(response.status).to.eql(403);
+    });
     ingredient.delete(db);
+    expect(response.status).to.eql(403);
   });
 
   it("Returns 403 for invalid recipe 4", async function () {
@@ -368,7 +368,7 @@ describe("POST /recipe", function () {
           "vegetarian",
           "low calorie"
       ]
-  });
+    });
     expect(response.status).to.eql(403);
   });
 });
@@ -457,6 +457,10 @@ describe("DELETE /recipes/{id}", function () {
     const response= await request(app).delete("/recipes/"+test.id).set(headers).send({
       "id": test.id
     });
+    test.delete(db);
     expect(response.status).to.eql(200);
    })
 });
+
+//Next time, using describe nesting and beforeall/beforeeach and afterall/aftereach we can remove the need for repetitions of logging in everytime and other boilerplate code like that.
+//because try-catches don't work.

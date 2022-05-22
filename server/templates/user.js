@@ -10,7 +10,7 @@ class User extends DatabaseObject {
         this.bindProperty('isAdmin', 'user_is_admin');
         this.bindProperty('username', 'user_name');
         this.bindProperty('email', 'user_email');
-        this.bindProperty('savedRecipes', 'user_savedRecipes');
+        // this.bindProperty('savedRecipes', 'user_savedRecipes'); //A separate table now? Commenting for now. Will remove or uncomment when confirmed.
         this.bindProperty('created', 'user_creation');
         this.bindProperty('lastLogin', 'user_last_login');
         this.bindProperty('lastLoginAddr', 'user_last_ip');

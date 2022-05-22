@@ -24,7 +24,7 @@ test('Is validate password working', () => {
 });
 
 describe("POST /login", function () {
-    it("Returns 400 if username format invalid", async function () {
+    it("Returns 403 if username format invalid", async function () {
         const response = await request(app).post("/login").send({
             "username": "user!name",
             "password": sha256("password1")
@@ -40,14 +40,14 @@ describe("POST /login", function () {
         expect(JSON.parse(response.error.text).message).to.eql('Parameter username has invalid format');
     });
 
-    it("Return 401 if username not found", async function () {
+    it("Return 403 if username not found", async function () {
         const response= await request(app).post("/login").send(
             {
                 "username": 'testUserName',
                 "password": sha256("pass123")
             });
        
-        expect(response.status).to.eql(401);
+        expect(response.status).to.eql(403);
      });
 
      it("Return 'Incorrect username or password' error message if username not found", async function () {
@@ -59,7 +59,7 @@ describe("POST /login", function () {
         expect(JSON.parse(response.error.text).message).to.eql('Incorrect username or password');
      });
 
-     it("Return 401 if password doesn't match", async function () {  
+     it("Return 403 if password doesn't match", async function () {  
         const db = new sqlite('database.db');
 
         let test = new User(null, true);
@@ -77,8 +77,8 @@ describe("POST /login", function () {
             });
 
         //try {
-            expect(response.status).to.eql(401);
             test.delete(db);
+            expect(response.status).to.eql(403);
         // } catch (e) {
         //     test.delete(db);
         //     expect(response.status).to.eql(500);
@@ -102,8 +102,8 @@ describe("POST /login", function () {
                 "password": sha256("pass123")
             }); 
         //try {
-            expect(JSON.parse(response.error.text).message).to.eql('Incorrect username or password');
             test.delete(db);
+            expect(JSON.parse(response.error.text).message).to.eql('Incorrect username or password');
         // } catch (e) {
         //     test.delete(db);
         //     expect(JSON.parse(response.error.text).message).to.eql('Internal server error');

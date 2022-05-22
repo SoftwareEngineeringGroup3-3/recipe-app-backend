@@ -42,7 +42,7 @@ describe("POST /ingredients", function () {
     });
 
 
-    it("Returns 403 for 0 as name(invalid name)", async function () {
+    it("Returns 400 for 0 as name(invalid name)", async function () {
       const res_login = await request(app).post("/login").send({
                                                               "username": "Matthew",
                                                               "password": sha256("Mateusz")
@@ -56,8 +56,25 @@ describe("POST /ingredients", function () {
         "name": "0",
       });
       
-      expect(response.status).to.eql(403);
+      expect(response.status).to.eql(400);
     });
+
+    it("Returns 400 for invalid body", async function () {
+        const res_login = await request(app).post("/login").send({
+                                                                "username": "Matthew",
+                                                                "password": sha256("Mateusz")
+                                                            });
+  
+        const headers = {
+          Cookie: `security_header=${res_login._body.security_header}; path=/`
+        }
+  
+        const response = await request(app).post("/ingredients").set(headers).send({
+          "lol": "0",
+        });
+        
+        expect(response.status).to.eql(400);
+      });
 
     it("should return 403 for ingredient with existing name",async function () {
       const res_login = await request(app).post("/login").send({
@@ -80,10 +97,8 @@ describe("POST /ingredients", function () {
       const response= await request(app).post("/ingredients").set(headers).send({
           "name": test.name
       });
-
-      expect(response.status).to.eql(403);
-
       test.delete(db);
+      expect(response.status).to.eql(403);
      })
 
     it("Should return 200 for non-pre-existing name with correct data and user is an admin",async function () {
@@ -97,13 +112,19 @@ describe("POST /ingredients", function () {
         }
 
         const response= await request(app).post("/ingredients").set(headers).send({
-            "name": "Correct_InsertionTestReserved"
+            "name": "CorrectInsertionTestReserved"
         });
-        expect(response.status).to.eql(200);
-        var respParsBody= JSON.parse(response.text);
-        var rem = new Ingredient(respParsBody.ingredient_id);
-        const db = new sqlite('database.db');
-        rem.delete(db);
+        try
+        {
+            expect(response.status).to.eql(200);
+        }
+        finally //always runs cleanup now :)
+        {
+            var respParsBody= JSON.parse(response.text);
+            var rem = new Ingredient(respParsBody.ingredient_id);
+            const db = new sqlite('database.db');
+            rem.delete(db);
+        }
     });
 });
   
@@ -167,7 +188,7 @@ describe("DELETE /ingredients", function () {
         "id": 0
       });
       expect(response.status).to.eql(404);
-  })
+  });
 
   it("should return 200 for exisitng id",async function () {
     const res_login = await request(app).post("/login").send({
@@ -189,7 +210,15 @@ describe("DELETE /ingredients", function () {
     const response= await request(app).delete("/ingredients/"+test.id).set(headers).send({
       "id": test.id
     });
-    expect(response.status).to.eql(200);
+    try
+    {
+        expect(response.status).to.eql(200);
+    }
+    catch(error)
+    {
+        test.delete(db);
+        throw error;
+    }
    })
 });
 
@@ -246,7 +275,7 @@ describe("PUT /ingredients/{id}", function () { //ID and Packet validation is do
 
     const response = await request(app).put("/ingredients/0").set(headers).send({
       "id": 0,
-      "name": "NOW_BETTER_THAN_EVER",
+      "name": "NOWBETTERTHANEVER",
       "photo": ""
     });
     
@@ -267,17 +296,18 @@ describe("PUT /ingredients/{id}", function () { //ID and Packet validation is do
     const db = new sqlite('database.db');
 
     var test = new Ingredient();
-    test.name="UPDATE_TEST_RESERVED";
+    test.name="UPDATETESTRESERVED";
     test.photo="";
     test.insert(db);
 
     const response= await request(app).put("/ingredients/"+test.id).set(headers).send(
         {"id": test.id,
-        "name": "NOW_BETTER_THAN_EVER_VTWO",
+        "name": "NOWBETTERTHANEVERVTWO",
         "photo":""});
+    test.delete(db);
     expect(response.status).to.eql(200);
     //Here, we can additionally compare parsed response to var test to see if the changes did take place. Maybe later?
-    test.delete(db);
+    
    })
 });
 
