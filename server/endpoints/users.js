@@ -14,6 +14,26 @@ const checkUsernameUniqueness = (req, username) => {
     return true;
 }
 
+/**
+ * 
+ * @param {Processed_GET_Request} req - Get request that contains page and limit as parameters, and processed by middleware to have an opened sqlite3 database.
+ * @returns a JSON body of response containing total number of users and list of objects containing the ID and username for every user on the given page and limit.
+ */
+const getAllUsers = (req) => {
+    const page = req.query.page;
+    const limit = req.query.limit;
+    const users = req.database.prepare(`SELECT user_id AS id, user_name AS name, user_is_admin as is_admin, user_email as email FROM users`).all();
+    let resBody = { total_users: users.length, users: []};
+    let pageUsers = [];
+    for(let i = (page-1) * limit; i < page*limit; i++) {
+        if(users[i] != null) pageUsers.push(users[i]);
+        else break;
+    }
+    resBody.users = pageUsers;
+    return resBody;
+}
+
+
 class ApiUserObject extends ApiObject {
 
     async delete (req) {
@@ -71,6 +91,26 @@ class ApiUserObject extends ApiObject {
 
         userData.sync(req.database);
         return userData.serialize();
+    }
+
+
+    async get(req){
+        if(!req.user || (req.user.id != req.params.id && !req.user.isAdmin)) {
+            throw new ApiError(401, 'Not authorized.');
+        }
+
+        if(req.params.id == 'all') {
+            console.log('Received: POST ingredients/all');
+            console.log(req.params)
+            if(!req.query || !req.query.page || !req.query.limit || isNaN(req.query.page) || isNaN(req.query.limit))
+            {
+                throw new ApiError(403,"Validation Error!")
+            }
+            else
+            {
+                return getAllUsers(req);
+            }
+        }
     }
 }
 
