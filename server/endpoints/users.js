@@ -22,7 +22,7 @@ const checkUsernameUniqueness = (req, username) => {
 const getAllUsers = (req) => {
     const page = req.query.page;
     const limit = req.query.limit;
-    const users = req.database.prepare(`SELECT user_id AS id, user_name AS name FROM users`).all();
+    const users = req.database.prepare(`SELECT user_id AS id, user_name AS name, user_is_admin as is_admin, user_email as email FROM users`).all();
     let resBody = { total_users: users.length, users: []};
     let pageUsers = [];
     for(let i = (page-1) * limit; i < page*limit; i++) {
