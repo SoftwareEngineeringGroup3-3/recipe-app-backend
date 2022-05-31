@@ -26,7 +26,8 @@ const countIngredients = (ingredientList) =>{
 const findMissingIngredients = (stringIngred, givenIngredients) =>{ //or ingredientLists if I want to do nested for loops.
     let ingredCount=countIngredients(stringIngred);
     let string='';
-    string=stringIngred.replace(/:.*;/,';');
+    stringIngred=stringIngred.replace(/\s/g, "");
+    string=stringIngred.replace(/:.*?g/,'');
     string=string.replace(/:.*/,''); //handles the last ingredient because that doesn't always have ';'
 
     const missingIngreds=[];
@@ -52,32 +53,45 @@ class ApiIngredientObject extends ApiObject {
         let givenIngredientsCount=0;
         let queryPart=[];
 
-        const parsedJson=JSON.parse(req.body)
-        try
+        
+        
+        var parsedJson=undefined
+        if(!req.body||Object.keys(req.body).length === 0)
         {
-            let i=0;
-            for(let templo of parsedJson)
+
+        }
+        else
+        {
+            parsedJson=JSON.parse(req.body)
+            try
             {
-                break;
+                let i=0;
+                for(let templo of parsedJson)
+                {
+                    break;
+                }
             }
-        }
-        catch(err)
-        {
-            if (err.code==TypeError.code)
-                throw new ApiError(403,"Validation error: probably JSON is not iterable");
-        }
-        for(const ingredient of parsedJson) //maybe I should've used "in" instead of "of"??? Doesn't seem to trygger exception of not being iterable.
-        {
-            this.validateFormat(ingredient,ingredientNextFormat,true);
-            givenIngredients.push(ingredient.id);
-            queryPart.push(`recipe_ingredients LIKE \'%${ingredient.id}:%\'`);
-            givenIngredientsCount++;
+            catch(err)
+            {
+                if (err.code==TypeError.code)
+                    throw new ApiError(403,"Validation error: probably JSON is not iterable");
+            }
+            for(const ingredient of parsedJson) //maybe I should've used "in" instead of "of"??? Doesn't seem to trygger exception of not being iterable.
+            {
+                this.validateFormat(ingredient,ingredientNextFormat,true);
+                givenIngredients.push(ingredient.id);
+                queryPart.push(`recipe_ingredients LIKE \'%${ingredient.id}:%\'`);
+                givenIngredientsCount++;
+            }
+
         }
         if(queryPart.length<1)
         {
             //throw new ApiError(403, "No ingredients selected.")
             queryPart=['1=1 '];
         }
+
+
 
         let recipesIngredientLists=req.database.prepare(
             `SELECT recipe_ingredients as RI FROM recipes 
