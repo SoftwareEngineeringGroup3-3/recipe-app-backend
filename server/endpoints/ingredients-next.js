@@ -26,13 +26,18 @@ const countIngredients = (ingredientList) =>{
 const findMissingIngredients = (stringIngred, givenIngredients) =>{ //or ingredientLists if I want to do nested for loops.
     let ingredCount=countIngredients(stringIngred);
     let string='';
-    stringIngred=stringIngred.replace(/\s/g, "");
-    string=stringIngred.replace(/:.*?g/,'');
-    string=string.replace(/:.*/,''); //handles the last ingredient because that doesn't always have ';'
-
+    stringIngred=stringIngred.replaceAll(/\s/g, "");
+    // console.log(stringIngred)
+    string=stringIngred.replaceAll(/:.*?;/g,';');
+    // console.log(string)
+    string=string.replaceAll(/:.*/g,''); //handles the last ingredient because that doesn't always have ';'
+    // console.log(string)
     const missingIngreds=[];
     let strIngredArr=string.split(';');
+    // console.log(strIngredArr)
     for(let i=0; i<strIngredArr.length; i++){
+        if(strIngredArr[i].trim()=="")
+            continue;
         if(!givenIngredients.includes(Number(strIngredArr[i])))
         {
             missingIngreds.push(strIngredArr[i]);
@@ -40,6 +45,8 @@ const findMissingIngredients = (stringIngred, givenIngredients) =>{ //or ingredi
     }
     return missingIngreds;
 }
+
+
 class ApiIngredientObject extends ApiObject {
     async get(req){
         console.log("endpoints/ingredients/next: recieved get");
@@ -101,23 +108,27 @@ class ApiIngredientObject extends ApiObject {
             // ORDER BY random() DESC
             // LIMIT ${limit} OFFSET ${(page-1)*limit} `) //was (page*limit) but now I'm assuming frontend will start sending from page=1
             // .all();
-        
         let missingIngredients=[];
         for(let i=0;i<recipesIngredientLists.length;i++)
         {
             missingIngredients=missingIngredients.concat(findMissingIngredients(recipesIngredientLists[i]['RI'],givenIngredients));
         }
-        const total_ingredients = missingIngredients.length
-        let beginIndex =(page-1)*limit;
-        const min=0; const max=total_ingredients-1 + 99;
-        beginIndex=beginIndex>min?beginIndex:min;
-        beginIndex=beginIndex<max?beginIndex:max;
-
-        missingIngredients=missingIngredients.splice(beginIndex, limit)//endIndex-beginIndex); //assuming frontend sends page starting from 1 (not 0)
         // console.log(typeof(missingIngredients)+" : "+missingIngredients)
         let ingredients=[]
+        let ingredientIdsAlreadyAdded=[]
+        let count=0
+        console.log(missingIngredients)
         for(let i=0;i<missingIngredients.length;i++)
         {
+            count++;
+            if(ingredientIdsAlreadyAdded.includes(missingIngredients[i]))
+            {
+                console.log(ingredientIdsAlreadyAdded)
+                console.log(missingIngredients[i])
+                count--;
+                continue;
+            }
+            ingredientIdsAlreadyAdded.push(missingIngredients[i])
             let currIngred=new Ingredient(missingIngredients[i]);
             currIngred.fetch(req.database);
             delete currIngred.synchronized;
@@ -125,6 +136,14 @@ class ApiIngredientObject extends ApiObject {
             delete currIngred.tableName;
             ingredients.push(currIngred);
         }
+
+        const total_ingredients = count
+        let beginIndex =(page-1)*limit;
+        const min=0; const max=total_ingredients-1 + 99;
+        beginIndex=beginIndex>min?beginIndex:min;
+        beginIndex=beginIndex<max?beginIndex:max;
+
+        missingIngredients=missingIngredients.splice(beginIndex, limit)//endIndex-beginIndex); //assuming frontend sends page starting from 1 (not 0)
 
         if(ingredients.length==0)
         {
