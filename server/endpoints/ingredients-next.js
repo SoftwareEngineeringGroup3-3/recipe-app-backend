@@ -117,14 +117,14 @@ class ApiIngredientObject extends ApiObject {
         let ingredients=[]
         let ingredientIdsAlreadyAdded=[]
         let count=0
-        console.log(missingIngredients)
+        // console.log(missingIngredients)
         for(let i=0;i<missingIngredients.length;i++)
         {
             count++;
             if(ingredientIdsAlreadyAdded.includes(missingIngredients[i]))
             {
-                console.log(ingredientIdsAlreadyAdded)
-                console.log(missingIngredients[i])
+                // console.log(ingredientIdsAlreadyAdded)
+                // console.log(missingIngredients[i])
                 count--;
                 continue;
             }
