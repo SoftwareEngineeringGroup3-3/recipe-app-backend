@@ -112,30 +112,25 @@ class ApiIngredientObject extends ApiObject {
         const min=0; const max=total_ingredients-1 + 99;
         beginIndex=beginIndex>min?beginIndex:min;
         beginIndex=beginIndex<max?beginIndex:max;
-        // const beginIndex= clamp((page-1)*limit,0,total_ingredients-1 + 99); //was -limit //+99 to let it be out of bounds so we can return empty array upon an invalid page limit combination
-        // const endIndex= clamp(page*limit,beginIndex, total_ingredients-1);
-        // if(beginIndex>=endIndex)
-        // {
-        //     endIndex= beginIndex+limit;
-        // }
-        const ingredients=missingIngredients.splice(beginIndex, limit)//endIndex-beginIndex); //assuming frontend sends page starting from 1 (not 0)
-        // const ingredientsToReturn=[];
-        // for(let i=0; i<5;i++)
-        // {
-        //     let index= Math.floor(Math.random() * ((missingIngredients.length-1)+ 1));
-        //     if(!missingIngredients[index]=="" && !ingredientsToReturn.includes(missingIngredients[index])) //avoids duplicates
-        //     {
-        //         ingredientsToReturn.push(missingIngredients[index]);
-        //     }
-        // }
 
-        // if(ingredientsToReturn.length == 0)
+        missingIngredients=missingIngredients.splice(beginIndex, limit)//endIndex-beginIndex); //assuming frontend sends page starting from 1 (not 0)
+        // console.log(typeof(missingIngredients)+" : "+missingIngredients)
+        let ingredients=[]
+        for(let i=0;i<missingIngredients.length;i++)
+        {
+            let currIngred=new Ingredient(missingIngredients[i]);
+            currIngred.fetch(req.database);
+            delete currIngred.synchronized;
+            delete currIngred.__props;
+            delete currIngred.tableName;
+            ingredients.push(currIngred);
+        }
+
         if(ingredients.length==0)
         {
             throw new ApiError(404, "No suitable ingredients were found.");
         }
 
-        // return ingredientsToReturn;
         return {total_ingredients, ingredients};
     }
 
