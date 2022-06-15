@@ -7,10 +7,10 @@ module.exports = async (req, res, next) => {
 
         if(token) {
             try {
-                //const user_id = await verifyToken(req.database, token, req.socket.remoteAddress);
+                const user_id = await verifyToken(req.database, token, req.socket.remoteAddress);
 
-                if(true) {
-                    const user = new User(1, false);
+                if(user_id) {
+                    const user = new User(user_id, false);
                     user.fetch(req.database);
 
                     req.user = user;
