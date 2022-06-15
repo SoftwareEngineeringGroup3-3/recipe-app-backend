@@ -100,7 +100,7 @@ class ApiUserObject extends ApiObject {
         }
 
         if(req.params.id == 'all') {
-            console.log('Received: POST ingredients/all');
+            console.log('Received: GET users/all');
             console.log(req.params)
             if(!req.query || !req.query.page || !req.query.limit || isNaN(req.query.page) || isNaN(req.query.limit))
             {
